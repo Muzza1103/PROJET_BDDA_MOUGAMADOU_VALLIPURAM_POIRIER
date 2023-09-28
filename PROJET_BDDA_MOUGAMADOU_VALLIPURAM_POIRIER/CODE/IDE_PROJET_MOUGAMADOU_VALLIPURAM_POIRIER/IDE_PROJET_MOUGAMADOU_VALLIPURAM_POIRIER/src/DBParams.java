@@ -6,6 +6,10 @@ public class DBParams {
 
     public static void main (String[] args){
         System.out.println("test");
+        DBPath = "";
+        SGBDPageSize = 4096;
+        DMFileCount = 4;
+
     }
 
 }

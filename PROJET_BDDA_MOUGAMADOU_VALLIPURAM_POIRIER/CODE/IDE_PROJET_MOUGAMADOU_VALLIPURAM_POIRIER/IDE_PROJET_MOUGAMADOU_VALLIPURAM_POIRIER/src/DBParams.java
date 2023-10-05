@@ -6,7 +6,7 @@ public class DBParams {
 
     public static void main (String[] args){
         System.out.println("test");
-        DBPath = "";
+        DBPath = "/users/licence/in07091/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/DB/";
         SGBDPageSize = 4096;
         DMFileCount = 4;
 

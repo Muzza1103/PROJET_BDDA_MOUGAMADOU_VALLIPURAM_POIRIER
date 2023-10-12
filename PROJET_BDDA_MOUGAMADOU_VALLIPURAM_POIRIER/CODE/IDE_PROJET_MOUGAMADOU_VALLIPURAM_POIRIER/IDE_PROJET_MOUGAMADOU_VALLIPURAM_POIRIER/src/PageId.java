@@ -1,12 +1,13 @@
-
 public class PageId {
 	private int fileIdx;
 	private int pageIdx;
+	private int nbreAcces;
 
 
 	public PageId(int fileIdx, int pageIdx){
 		this.fileIdx = fileIdx;
 		this.pageIdx = pageIdx;
+		this.nbreAcces = 0;
 	}
 	
 	public int getFileIdx() {
@@ -27,4 +28,13 @@ public class PageId {
 		sb.append("F"+fileIdx+", Page : "+pageIdx);
 		return sb.toString();
 	}
+	
+	public void incrNbreAcces() {
+		nbreAcces++;
+	}
+	
+	public int getNbreAcces() {
+		return nbreAcces;
+	}
 }
+

@@ -11,4 +11,8 @@ public class TableInfo {
         return this.nom_rel;
     }
 
+    public ColInfo getColInfo(){
+        return this.col_info;
+    }
+
 }

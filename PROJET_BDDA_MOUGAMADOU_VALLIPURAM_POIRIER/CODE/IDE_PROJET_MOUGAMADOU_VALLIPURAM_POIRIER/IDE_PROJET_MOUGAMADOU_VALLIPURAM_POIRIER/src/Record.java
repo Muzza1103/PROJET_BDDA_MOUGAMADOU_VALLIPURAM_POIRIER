@@ -18,6 +18,10 @@ public class Record {
             }
         }
         
+        //Ecrire recvalues dans buffer si pas de varstring
+        if(tabInfo.getColInfo().GetTypCol().contains(STRING(T)) || tabInfo.getColInfo().GetTypCol().contains(VARSTRING(T))){
+            //on utilise le modèle 
+        }
         return taille;
     }
 }

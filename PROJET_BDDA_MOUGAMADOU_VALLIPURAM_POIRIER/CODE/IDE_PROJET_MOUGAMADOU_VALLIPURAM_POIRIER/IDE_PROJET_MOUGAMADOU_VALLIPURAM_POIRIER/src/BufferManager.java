@@ -24,7 +24,7 @@ public class BufferManager {
                 //ECRITURE
             }
             frame.valdirty = 0;
-        }
+        } 
     }
 
 }

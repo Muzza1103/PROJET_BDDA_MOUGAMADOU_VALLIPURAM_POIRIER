@@ -56,7 +56,7 @@ public class DiskManager {
 		if(pilePageOccupe.contains(pageId) || pilePageLibre.contains(pageId)){ //en considérant que les pages libres peuvent ne pas être vide
 			String fileName = "F"+pageId.getFileIdx()+".bin";
 			try{
-				RandomAccessFile rf = new RandomAccessFile(fileName, "r");
+				RandomAccessFile rf = new RandomAccessFile(DBParams.DBPath+fileName, "r");
 				rf.seek(pageId.getPageIdx()*DBParams.SGBDPageSize);
 				buff.clear();
 				byte[] pageData = new byte[(int)DBParams.SGBDPageSize];
@@ -77,7 +77,8 @@ public class DiskManager {
         if (pilePageOccupe.contains(pageId)) {
             String fileName = "F" + pageId.getFileIdx() + ".bin";
             try {
-				RandomAccessFile rf = new RandomAccessFile(fileName, "rw");
+            	//File file = new File(DBParams.DBPath+fileName);
+				RandomAccessFile rf = new RandomAccessFile(DBParams.DBPath+fileName, "rw");
 				rf.seek(pageId.getPageIdx() * DBParams.SGBDPageSize);
 				if (buff.remaining() <= DBParams.SGBDPageSize) { // Pour être sur que la quantité de données que l'on va écrire est plus petite que la taille de la page 
 					buff.flip();
@@ -88,6 +89,7 @@ public class DiskManager {
 				} else {
 					System.out.println("La quantité de données restantes est supérieure à la taille de la page.");
 				}
+            		
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("Erreur lors de l'écriture de la page.");

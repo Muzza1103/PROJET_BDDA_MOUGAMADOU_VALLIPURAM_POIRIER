@@ -11,7 +11,7 @@ public class DiskManagerTests {
 
 		//TestDesAllocPage();
 
-		//TestEcritureLecturePage();
+		TestEcritureLecturePage();
 	}
 
 	public static void TestAllocationPage() { // Vérifier que l'ordre de création des fichiers et de leurs pages est correcte, et que cela alloue bien en priorié les pages de la pile PilePageLibre
@@ -44,7 +44,7 @@ public class DiskManagerTests {
 
 		//Ecriture
 		ByteBuffer buff1 = ByteBuffer.allocate((int)DBParams.SGBDPageSize);
-		String sb = "Il fait pas beau !";
+		String sb = "Il faisait pas beau ce matin !";
 		byte[] sbBytes = sb.getBytes();
 		if (sbBytes.length <= DBParams.SGBDPageSize ){
 			buff1.put(sb.getBytes());

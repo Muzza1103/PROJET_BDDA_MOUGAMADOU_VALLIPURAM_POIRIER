@@ -16,4 +16,15 @@ public class PageId {
 	public int getPageIdx() {
 		return pageIdx;
 	}
+
+	public boolean equals(Object obj){
+    PageId p = (PageId) obj;
+    return fileIdx == p.getFileIdx() && pageIdx == p.getPageIdx();
+}
+
+	public String toString(){
+		StringBuffer sb = new StringBuffer();
+		sb.append("F"+fileIdx+", Page : "+pageIdx);
+		return sb.toString();
+	}
 }

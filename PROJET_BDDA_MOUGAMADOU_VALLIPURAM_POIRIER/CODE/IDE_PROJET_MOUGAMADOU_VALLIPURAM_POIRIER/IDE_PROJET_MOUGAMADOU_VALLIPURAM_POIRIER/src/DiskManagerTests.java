@@ -30,6 +30,7 @@ public class DiskManagerTests {
 		}
 
 		PageId pageDesalocalise = new PageId(0,0);
+		dk.DeallocPage(pageDesalocalise);
 		System.out.println("Désallocation de la page : "+pageDesalocalise.toString());
 		PageId pageAllocDePilePageLibre = dk.AllocPage();
 		System.out.println("Allocation de la page : "+pageAllocDePilePageLibre.toString());

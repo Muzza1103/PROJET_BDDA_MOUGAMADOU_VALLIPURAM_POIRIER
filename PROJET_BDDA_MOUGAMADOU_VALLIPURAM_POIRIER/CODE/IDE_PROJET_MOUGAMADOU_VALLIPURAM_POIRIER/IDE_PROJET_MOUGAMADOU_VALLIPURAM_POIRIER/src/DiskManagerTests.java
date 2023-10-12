@@ -7,11 +7,11 @@ public class DiskManagerTests {
 		DBParams.SGBDPageSize = 4096;
         	DBParams.DMFileCount = 4;
 		
-		//TestAllocationPage();
+		TestAllocationPage();
 
 		//TestDesAllocPage();
 
-		TestEcritureLecturePage();
+		//TestEcritureLecturePage();
 	}
 
 	public static void TestAllocationPage() { // Vérifier que l'ordre de création des fichiers et de leurs pages est correcte, et que cela alloue bien en priorié les pages de la pile PilePageLibre

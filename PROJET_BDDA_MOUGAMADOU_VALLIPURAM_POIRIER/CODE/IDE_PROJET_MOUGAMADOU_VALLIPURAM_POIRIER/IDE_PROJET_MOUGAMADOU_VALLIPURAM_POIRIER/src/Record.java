@@ -59,6 +59,7 @@ public class Record {
                 }
             }
 
+            taille = T-pos;
         }
 
         else {
@@ -71,7 +72,7 @@ public class Record {
             int pos_index = 1;
             int pos_valeur = recvalues.size()+1;
             
-            for(int k = 0; k<recvalues.size(); k++){
+            for(int k = 0; k<recvalues.size()-1; k++){
                 buffer.position(pos_index);
                 buffer.put((byte)pos_valeur);
 
@@ -102,8 +103,17 @@ public class Record {
                     pos_valeur += valeur_varstring.length();
                 }
             }
+
+            //ajouter cas du dernier élément
+            taille = pos_valeur;
         }
-        taille = T-pos;
+        
+        return taille;
+    }
+
+    public int readToBuffer(ByteBuffer buff, int pos){
+        
+
         return taille;
     }
 }

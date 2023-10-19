@@ -3,19 +3,20 @@ import java.util.Scanner;
 
 public class DiskManagerTests {
 	public static void main(String [] args) {
-		DBParams.DBPath = "/users/licence/in07091/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/DB/";
+		DBParams.DBPath = "/users/licence/im27206/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/DB/";
 		DBParams.SGBDPageSize = 4096;
-        DBParams.DMFileCount = 4;
+        	DBParams.DMFileCount = 4;
 		
-		TestAllocationPage();
+		//TestAllocationPage();
 
-		//TestDesAllocPage();3
+		//TestDesAllocPage();
 
 		TestEcritureLecturePage();
 	}
 
 	public static void TestAllocationPage() { // Vérifier que l'ordre de création des fichiers et de leurs pages est correcte, et que cela alloue bien en priorié les pages de la pile PilePageLibre
-		DiskManager dk = new DiskManager();
+		
+		DiskManager dk = DiskManager.getInstance();
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Combien de pages voulez vous alloué ?");
 		int nbrPage = sc.nextInt();
@@ -38,8 +39,8 @@ public class DiskManagerTests {
 	}
 	
 	public static void TestEcritureLecturePage() { // Vérifier que l'écriture et la lecture fonctionne 
-
-		DiskManager dk = new DiskManager();	
+	
+		DiskManager dk = DiskManager.getInstance();
 		PageId pageAlloue = dk.AllocPage();
 
 		//Ecriture
@@ -69,7 +70,7 @@ public class DiskManagerTests {
 
 	public static void TestDesAllocPage() { // Essaie de désallouer une page déjà désalloué ou qui n'a pas été crée
 
-		DiskManager dk = new DiskManager();
+		DiskManager dk = DiskManager.getInstance();
 		PageId pageAlloue = dk.AllocPage();
 		dk.DeallocPage(pageAlloue);
 		dk.DeallocPage(pageAlloue);

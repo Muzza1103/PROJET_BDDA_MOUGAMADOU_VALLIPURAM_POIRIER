@@ -1,4 +1,3 @@
-
 public class PageId {
 	private int fileIdx;
 	private int pageIdx;
@@ -38,3 +37,4 @@ public class PageId {
 		return nbreAcces;
 	}
 }
+

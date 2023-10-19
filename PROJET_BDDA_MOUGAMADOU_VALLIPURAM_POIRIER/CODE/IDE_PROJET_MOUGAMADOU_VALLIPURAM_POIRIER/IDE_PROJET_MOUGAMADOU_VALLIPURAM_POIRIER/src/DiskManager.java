@@ -5,15 +5,23 @@ import java.nio.ByteBuffer;
 import java.io.File;
 import java.io.IOException;
 
-public class DiskManager {
+public final class DiskManager {
 	
+	private static DiskManager dk = null;
 	private Stack<PageId> pilePageLibre ;
 	private Stack<PageId> pilePageOccupe ;
 	private static final int PAGEIDMAX = 999;
 
-	public DiskManager() {
+	private DiskManager() {
 		pilePageLibre = new Stack<PageId>();
 		pilePageOccupe = new Stack<PageId>();
+	}
+	
+	public static DiskManager getInstance() {
+		if (dk == null) {
+			dk = new DiskManager();
+		}
+		return dk;
 	}
 
 	
@@ -116,4 +124,5 @@ public class DiskManager {
 	}
 
 }
+
 

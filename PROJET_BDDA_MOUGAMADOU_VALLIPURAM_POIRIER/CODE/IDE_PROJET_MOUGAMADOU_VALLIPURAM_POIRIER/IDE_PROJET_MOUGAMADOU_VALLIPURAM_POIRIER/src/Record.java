@@ -58,8 +58,51 @@ public class Record {
                     pos += T;
                 }
             }
+
         }
 
+        else {
+            //on utilise le modèle taille variable
+            ByteBuffer nvbuff;
+            //init le offset directory
+            buffer.position(0);       
+            buffer.put((byte)(recvalues.size()+1));
+            
+            int pos_index = 1;
+            int pos_valeur = recvalues.size()+1;
+            
+            for(int k = 0; k<recvalues.size(); k++){
+                buffer.position(pos_index);
+                buffer.put((byte)pos_valeur);
+
+                if(tabInfo.getColInfo(k).GetTypCol()==FLOAT()){
+                    float inter_float_variable = (float) recvalues.get(k);
+                    buffer.put((byte)inter_float_variable);
+                    pos_index ++;
+                    pos_valeur += Float.BYTES;
+                }
+
+                else if(tabInfo.getColInfo(k).GetTypCol()==INT()){
+                    int inter_int_variable = (int) recvalues.get(k);
+                    buffer.put((byte)inter_int_variable);
+                    pos_index ++;
+                    pos_valeur += Integer.BYTES;
+                }
+
+                else if(tabInfo.getColInfo(k).GetTypCol()==STRING(T)){
+                    buffer.put((byte)recvalues.get(k));
+                    pos_index ++;
+                    pos_valeur += T;
+                }
+
+                else if(tabInfo.getColInfo(k).GetTypCol() == VARSTRING()){
+                    String valeur_varstring = (String) recvalues.get(k);
+                    buffer.put((byte)recvalues.get(k));
+                    pos_index ++;
+                    pos_valeur += valeur_varstring.length();
+                }
+            }
+        }
         taille = T-pos;
         return taille;
     }

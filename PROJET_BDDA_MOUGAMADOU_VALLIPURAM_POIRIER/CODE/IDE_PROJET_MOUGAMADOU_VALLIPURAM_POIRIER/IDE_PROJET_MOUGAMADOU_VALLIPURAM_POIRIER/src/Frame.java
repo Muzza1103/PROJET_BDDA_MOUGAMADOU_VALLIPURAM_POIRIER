@@ -1,4 +1,5 @@
 import java.nio.ByteBuffer;
+import java.lang.StringBuilder;
 
 public class Frame {
     private int pin_count;
@@ -55,6 +56,11 @@ public class Frame {
     public void loadPage(PageId pageId) {
         this.page_chargee = pageId;
         // va charger le contenu de la page depuis le disque dans le buffer de cette frame
+    }
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("Page Chargé : "+page_chargee.toString());
+    	return sb.toString();
     }
 
 }

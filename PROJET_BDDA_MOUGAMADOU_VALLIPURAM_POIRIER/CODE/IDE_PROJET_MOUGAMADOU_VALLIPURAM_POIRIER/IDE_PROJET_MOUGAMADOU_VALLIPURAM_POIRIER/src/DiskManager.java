@@ -72,6 +72,7 @@ public final class DiskManager {
             	buff.put(pageData); //on met les données de la lecture dans le buffer
 				buff.flip();
 				rf.close();
+				pageId.incrNbreAcces();
 			}catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("Erreur lors de la lecture de la page.");
@@ -94,6 +95,7 @@ public final class DiskManager {
 					buff.get(pageData); // Copie les données du buffer dans pageData
 					rf.write(pageData); // Écrire le contenu de pageData dans le fichier
 					rf.close();
+					pageId.incrNbreAcces();
 				} else {
 					System.out.println("La quantité de données restantes est supérieure à la taille de la page.");
 				}

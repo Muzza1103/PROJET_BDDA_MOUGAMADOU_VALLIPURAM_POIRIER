@@ -25,7 +25,7 @@ public final class BufferManager {
     public ByteBuffer GetPage(PageId ID_page){
     	
     	//buffer qui va permettre de stocker une page
-    	ByteBuffer byteB = ByteBuffer.allocate((int)DBParams.SGBDPageSize);
+    	//ByteBuffer byteB = ByteBuffer.allocate((int)DBParams.SGBDPageSize);
     	Frame lFU = null; //frame de la page correspondant à LFU
     	int minAccessCount = Integer.MAX_VALUE;//le compteur du minimum d'accès
     	
@@ -42,9 +42,11 @@ public final class BufferManager {
                 if (f.getPageId() == null) {
                 	//frame = vide , va etre utilisé pour la page
                     f.incrPinCount();
+                    f.loadPage(ID_page);
                     f.getPageId().incrNbreAcces();
                     return f.getByteBuffer();
                 } else if (f.getPageId().getNbreAcces() < minAccessCount) {
+                	System.out.println("1");
                 	//trouve la frame avec le compteur d'acces min
                 	//pour respecter le LFU
                     lFU = f;
@@ -63,14 +65,19 @@ public final class BufferManager {
     //		}	
     //	}
     	 if (lFU != null) {
+    		 this.FreePage(lFU.getPageId(), lFU.getValDirty());
+    		 System.out.println("2");
              lFU.loadPage(ID_page);
+             System.out.println("3");
              //charge la page dans LFU
              lFU.incrPinCount();
+             System.out.println("4");
              lFU.getPageId().incrNbreAcces();
+             System.out.println("5");
              return lFU.getByteBuffer();
          }
     	
-    	return byteB;
+    	return null;
     }
     
     
@@ -80,8 +87,10 @@ public final class BufferManager {
             	 // decremente pinCount et la page devient "dirty" dans certains cas
                  f.decreasePin_count();;
                  if (valdirty == 1) {
-                     f.setDirty(true);
+                	 DiskManager.getInstance().WritePage(f.getPageId(), f.getByteBuffer());
+                     f.setDirty(false);
                  }
+                 
              }
     	 }
     }
@@ -96,5 +105,13 @@ public final class BufferManager {
              //Va permettre de reinitialiser le PinCount
              frame.resetPin_count();
          }
+    }
+    
+    public void afficheFrame() {
+    	for (Frame f : listFrames ) {
+    		if(f.getPageId() != null) {
+    			System.out.println(f.toString());
+    		}
+    	}
     }
 }

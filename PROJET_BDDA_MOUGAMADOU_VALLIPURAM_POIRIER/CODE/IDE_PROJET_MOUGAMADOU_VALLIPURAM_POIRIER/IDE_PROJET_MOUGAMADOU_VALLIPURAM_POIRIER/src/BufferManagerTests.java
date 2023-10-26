@@ -6,12 +6,12 @@ public class BufferManagerTests {
 		DBParams.SGBDPageSize = 4096;
         DBParams.DMFileCount = 4;
         DBParams.frameCount = 2;
-        //TestEcritureEtLecture();
+        TestEcritureEtLecture();
         //TestEcritureEtLecture2();
-        TestEcritureEtLecture3();
+        //TestEcritureEtLecture3();
 	}
 	
-	public static void TestEcritureEtLecture() {
+	public static void TestEcritureEtLecture() { //teste la gestion des buffers pour avoir les bons textes écrit dans les bons buffers
 		DiskManager dk = DiskManager.getInstance();
 		BufferManager bm = BufferManager.getInstance();
 		
@@ -79,7 +79,7 @@ public class BufferManagerTests {
 			
 	}
 	
-	public static void TestEcritureEtLecture2() {
+	public static void TestEcritureEtLecture2() { // Cas test où 4 pages sont crées tour à tour, vérifie que lorsque les pincount sont égaux et que les nombres d'accées sont égaux la page désalloué est la plus ancienne.
 		DiskManager dk = DiskManager.getInstance();
 		BufferManager bm = BufferManager.getInstance();
 		
@@ -93,7 +93,7 @@ public class BufferManagerTests {
 			}
 			ByteBuffer bb = bm.GetPage(pageId);
 			System.out.println("6");
-			String sb1 = "muzza!";
+			String sb1 = "gota";
 			byte[] sbBytes = sb1.getBytes();
 			System.out.println("7");
 			bb.rewind();
@@ -114,7 +114,8 @@ public class BufferManagerTests {
 			bm.afficheFrame();
 		}
 	}
-	public static void TestEcritureEtLecture3() {
+	
+	public static void TestEcritureEtLecture3() { // Teste le cas LFU ou les deux frames ont leur pin count égal a 0, la bufferManager est censé désallouer la page la moins utilisé 
 		DiskManager dk = DiskManager.getInstance();
 		BufferManager bm = BufferManager.getInstance();
 		
@@ -128,17 +129,17 @@ public class BufferManagerTests {
 			System.out.println("Impossible d'allouer la page.");
 		}
 		if (pageId2 != null) {
-			System.out.println("Page allouée : " + pageId.toString());
+			System.out.println("Page allouée : " + pageId2.toString());
 		} else {
 			System.out.println("Impossible d'allouer la page.");
 		}
 		if (pageId3 != null) {
-			System.out.println("Page allouée : " + pageId.toString());
+			System.out.println("Page allouée : " + pageId3.toString());
 		} else {
 			System.out.println("Impossible d'allouer la page.");
 		}
 		if (pageId4 != null) {
-			System.out.println("Page allouée : " + pageId.toString());
+			System.out.println("Page allouée : " + pageId4.toString());
 		} else {
 			System.out.println("Impossible d'allouer la page.");
 		}
@@ -154,7 +155,7 @@ public class BufferManagerTests {
 			bb.put(sbBytes);
 		}
 			
-		dk.WritePage(pageId, bb);
+		dk.WritePage(pageId, bb); // Utilisation répété de PageId pour incrémenter l'utilisation de cette page
 		dk.ReadPage(pageId, bb);
 		bb.rewind();
 		dk.ReadPage(pageId, bb);
@@ -167,10 +168,10 @@ public class BufferManagerTests {
 		String lecture = new String(donneeLecture);
 		System.out.println("Lecture de la page : "+pageId.toString());
 		System.out.println(lecture);
-		bm.FreePage(pageId, 0);
 		bm.afficheFrame();
-		
-		ByteBuffer bb3 = bm.GetPage(pageId3);
+		bm.FreePage(pageId, 0);
+		bm.FreePage(pageId2, 0);
+		bm.GetPage(pageId4);
 		bm.afficheFrame();
 	}
 }

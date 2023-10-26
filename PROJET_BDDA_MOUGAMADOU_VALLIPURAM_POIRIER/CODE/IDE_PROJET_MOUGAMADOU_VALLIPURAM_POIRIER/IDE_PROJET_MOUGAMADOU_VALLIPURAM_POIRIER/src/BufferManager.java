@@ -31,6 +31,7 @@ public final class BufferManager {
     	
     	for(Frame f : listFrames) {
     		if (f.getPageId() != null && f.getPageId().equals(ID_page)) {
+    			System.out.println("if(1)");
     			//le cas où la page est deja dans une des frame
     			f.incrPinCount();
     			//incrémentation de pinCount
@@ -39,7 +40,9 @@ public final class BufferManager {
     			return f.getByteBuffer();
     			//renvoie le contenu de la page
     		}else if (f.getPinCount() == 0) {
+    			System.out.println("elseif(1)");
                 if (f.getPageId() == null) {
+                	System.out.println("if(2)");
                 	//frame = vide , va etre utilisé pour la page
                     f.incrPinCount();
                     f.loadPage(ID_page);

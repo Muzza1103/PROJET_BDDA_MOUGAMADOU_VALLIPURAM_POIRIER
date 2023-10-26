@@ -1,18 +1,26 @@
 public class ColInfo {
 
     private static String nom_colonne;
-    private static String type_colonne;
+    private static TypeColonne type_colonne;
+    private static int T;
     
-    public ColInfo(String nom_colonne, String type_colonne){
+    public ColInfo(String nom_colonne, TypeColonne type_colonne, int T){
         this.nom_colonne = nom_colonne;
         this.type_colonne = type_colonne;
+        this.T= T;
+        
     }
 
     public String GetNomCol(){
         return this.nom_colonne;
     }
 
-    public String GetTypCol(){
+    public TypeColonne GetTypCol(){
         return this.type_colonne;
     }
+    
+    public int GetT() {
+    	return T;
+    }
 }
+

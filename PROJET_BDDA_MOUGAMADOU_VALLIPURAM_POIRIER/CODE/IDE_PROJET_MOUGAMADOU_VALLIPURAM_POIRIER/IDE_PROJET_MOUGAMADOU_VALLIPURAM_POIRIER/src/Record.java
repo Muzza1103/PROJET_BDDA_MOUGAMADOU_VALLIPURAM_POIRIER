@@ -4,8 +4,6 @@ import java.util.ArrayList;
 public class Record {
     private static TableInfo tabInfo;
     private static ArrayList recvalues;
-    //CONSTANTE T
-    private static int T;
 
     public Record(TableInfo tabInfo){
         this.tabInfo = tabInfo;
@@ -22,44 +20,51 @@ public class Record {
         }*/
         
         //extraire la liste des types dans la table
-        ArrayList<String> types_contenus = new ArrayList<>();
+        ArrayList<TypeColonne> types_contenus = new ArrayList<>();
         for (int j=0; j<tabInfo.getColInfoList().size(); j++) {
             types_contenus.add(tabInfo.getColInfo(j).GetTypCol());
         }
 
         //Ecrire recvalues dans buffer si pas de varstring
-        if(!types_contenus.contains("VARSTRING(T)")){
+        int v =0;
+        for(TypeColonne t : types_contenus) {
+        	if(t.getType().equals("VARSTRING")) {
+        		v= 1;
+        	}
+        }
+        if(v==0) {
+        //if(!types_contenus.contains(TypeColonne i)){
             //on utilise le modèle taille fixe
             for(int i=0; i<recvalues.size(); i++){
                 //on vérifie le type de la relation
                 //gestion pour STRING
-                if(tabInfo.getColInfo(i).GetTypCol() == "STRING(T)"){
+                if(tabInfo.getColInfo(i).GetTypCol().getType().equals("STRING")){
                     
                     buffer.position(pos);
 
                     buffer.put((byte)recvalues.get(i));
-
-                    pos += T;
+                    pos += tabInfo.getColInfo(i).GetT();
 
                 } 
                 //gestion pour float & int
                 else {
                     buffer.position(pos);
                     
-                    if(tabInfo.getColInfo(i).GetTypCol() == "FLOAT"){
+                    if(tabInfo.getColInfo(i).GetTypCol().getType().equals("FLOAT")){
                         float inter_float = (float) recvalues.get(i);
                         buffer.put((byte)inter_float);
                     } 
                     
-                    else if (tabInfo.getColInfo(i).GetTypCol() == "INT"){
+                    else if (tabInfo.getColInfo(i).GetTypCol().getType().equals("INT")){
                         int inter_int = (int) recvalues.get(i);
                         buffer.put((byte)inter_int);
                     }
-                    pos += T;
+                    pos += tabInfo.getColInfo(i).GetT();
                 }
             }
 
-            taille = T-pos;
+            taille = pos - taille;
+            
         }
 
         else {
@@ -76,27 +81,27 @@ public class Record {
                 buffer.position(pos_index);
                 buffer.put((byte)pos_valeur);
 
-                if(tabInfo.getColInfo(k).GetTypCol()=="FLOAT"){
+                if(tabInfo.getColInfo(k).GetTypCol().getType().equals("FLOAT")){
                     float inter_float_variable = (float) recvalues.get(k);
                     buffer.put((byte)inter_float_variable);
                     pos_index ++;
                     pos_valeur += Float.BYTES;
                 }
 
-                else if(tabInfo.getColInfo(k).GetTypCol()=="INT"){
+                else if(tabInfo.getColInfo(k).GetTypCol().getType().equals("INT")){
                     int inter_int_variable = (int) recvalues.get(k);
                     buffer.put((byte)inter_int_variable);
                     pos_index ++;
                     pos_valeur += Integer.BYTES;
                 }
 
-                else if(tabInfo.getColInfo(k).GetTypCol()=="STRING(T)"){
+                else if(tabInfo.getColInfo(k).GetTypCol().getType().equals("STRING")){
                     buffer.put((byte)recvalues.get(k));
                     pos_index ++;
-                    pos_valeur += T;
+                    pos_valeur += tabInfo.getColInfo(k).GetT();
                 }
 
-                else if(tabInfo.getColInfo(k).GetTypCol() == "VARSTRING()"){
+                else if(tabInfo.getColInfo(k).GetTypCol().getType().equals("VARSTRING")){
                     String valeur_varstring = (String) recvalues.get(k);
                     buffer.put((byte)recvalues.get(k));
                     pos_index ++;

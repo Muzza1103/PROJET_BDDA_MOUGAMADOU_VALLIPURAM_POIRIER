@@ -111,10 +111,14 @@ public class Record {
         return taille;
     }
 
-    public int readToBuffer(ByteBuffer buff, int pos){
+    public int readFromBuffer(ByteBuffer buff, int pos){
         int taille=0;
         //vider la liste de valeurs
-        recvalues.clear();    
+        if(!recvalues.isEmpty()){
+            recvalues.clear();
+        }
+        
+        
         
 
         return taille;

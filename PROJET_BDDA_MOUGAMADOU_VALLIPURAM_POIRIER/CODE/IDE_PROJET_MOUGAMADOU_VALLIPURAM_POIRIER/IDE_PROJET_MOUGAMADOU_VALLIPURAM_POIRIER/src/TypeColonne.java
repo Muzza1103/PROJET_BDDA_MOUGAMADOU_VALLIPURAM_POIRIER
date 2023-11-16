@@ -22,4 +22,9 @@ public class TypeColonne {
 	public String getType() {
 		return type;
 	}
+	
+	public int getOctet() {
+		return nbOctet;
+	}
+	
 }

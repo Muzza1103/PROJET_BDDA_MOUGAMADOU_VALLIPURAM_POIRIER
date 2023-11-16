@@ -1,24 +1,24 @@
 import java.util.ArrayList;
 
 public class TableInfo {
-    private static String nom_rel;
-    private static int nb_colonnes;
-    private static ArrayList <ColInfo> col_info;
+    private static String nomRel;
+    private static int nbColonnes;
+    private static ArrayList <ColInfo> colInfo;
 
     public TableInfo(){
 
     }
 
     public String getNomRel(){
-        return this.nom_rel;
+        return this.nomRel;
     }
 
     public ColInfo getColInfo(int i){
-        return this.col_info.get(i);
+        return this.colInfo.get(i);
     }
 
     public ArrayList<ColInfo> getColInfoList(){
-        return this.col_info;
+        return this.colInfo;
     }
 
 }

@@ -20,14 +20,14 @@ public class Record {
         }*/
         
         //extraire la liste des types dans la table
-        ArrayList<TypeColonne> types_contenus = new ArrayList<>();
+        ArrayList<TypeColonne> typesContenus = new ArrayList<>();
         for (int j=0; j<tabInfo.getColInfoList().size(); j++) {
-            types_contenus.add(tabInfo.getColInfo(j).GetTypCol());
+            typesContenus.add(tabInfo.getColInfo(j).GetTypCol());
         }
 
         //Ecrire recvalues dans buffer si pas de varstring
         int v =0;
-        for(TypeColonne t : types_contenus) {
+        for(TypeColonne t : typesContenus) {
         	if(t.getType().equals("VARSTRING")) {
         		v= 1;
         	}
@@ -51,13 +51,13 @@ public class Record {
                     buffer.position(pos);
                     
                     if(tabInfo.getColInfo(i).GetTypCol().getType().equals("FLOAT")){
-                        float inter_float = (float) recvalues.get(i);
-                        buffer.put((byte)inter_float);
+                        float interFloat = (float) recvalues.get(i);
+                        buffer.put((byte)interFloat);
                     } 
                     
                     else if (tabInfo.getColInfo(i).GetTypCol().getType().equals("INT")){
-                        int inter_int = (int) recvalues.get(i);
-                        buffer.put((byte)inter_int);
+                        int interInt = (int) recvalues.get(i);
+                        buffer.put((byte)interInt);
                     }
                     pos += tabInfo.getColInfo(i).GetT();
                 }
@@ -74,50 +74,50 @@ public class Record {
             buffer.position(0);       
             buffer.put((byte)(recvalues.size()+1));
             
-            int pos_index = 1;
-            int pos_valeur = recvalues.size()+1;
+            int posIndex = 1;
+            int posValeur = recvalues.size()+1;
             
             for(int k = 0; k<recvalues.size()-1; k++){
-                buffer.position(pos_index);
-                buffer.put((byte)pos_valeur);
+                buffer.position(posIndex);
+                buffer.put((byte)posValeur);
 
                 if(tabInfo.getColInfo(k).GetTypCol().getType().equals("FLOAT")){
-                    float inter_float_variable = (float) recvalues.get(k);
-                    buffer.put((byte)inter_float_variable);
-                    pos_index ++;
-                    pos_valeur += Float.BYTES;
+                    float interFloatVariable = (float) recvalues.get(k);
+                    buffer.put((byte)interFloatVariable);
+                    posIndex ++;
+                    posValeur += Float.BYTES;
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol().getType().equals("INT")){
-                    int inter_int_variable = (int) recvalues.get(k);
-                    buffer.put((byte)inter_int_variable);
-                    pos_index ++;
-                    pos_valeur += Integer.BYTES;
+                    int interIntVariable = (int) recvalues.get(k);
+                    buffer.put((byte)interIntVariable);
+                    posIndex ++;
+                    posValeur += Integer.BYTES;
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol().getType().equals("STRING")){
                     buffer.put((byte)recvalues.get(k));
-                    pos_index ++;
-                    pos_valeur += tabInfo.getColInfo(k).GetT();
+                    posIndex ++;
+                    posValeur += tabInfo.getColInfo(k).GetT();
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol().getType().equals("VARSTRING")){
                     String valeur_varstring = (String) recvalues.get(k);
                     buffer.put((byte)recvalues.get(k));
-                    pos_index ++;
-                    pos_valeur += valeur_varstring.length();
+                    posIndex ++;
+                    posValeur += valeur_varstring.length();
                 }
             }
 
             //ajouter cas du dernier élément
-            taille = pos_valeur;
+            taille = posValeur;
         }
         
         return taille;
     }
 
     public int readFromBuffer(ByteBuffer buff, int pos){
-        int taille=0;
+        int taille = 0;
         //vider la liste de valeurs
         if(!recvalues.isEmpty()){
             recvalues.clear();

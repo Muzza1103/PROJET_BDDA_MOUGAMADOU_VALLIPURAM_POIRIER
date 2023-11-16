@@ -3,12 +3,12 @@ import java.util.*;
 public class DataBaseInfo {
 
     private static DataBaseInfo dbi = null;
-    private static ArrayList<TableInfo> list_infos;
-    private static int compteur_rel;
+    private static ArrayList<TableInfo> listInfos;
+    private static int compteurRel;
     
     private DataBaseInfo(){
-        this.list_infos = new ArrayList<TableInfo>();
-        this.compteur_rel = 0;
+        this.listInfos = new ArrayList<TableInfo>();
+        this.compteurRel = 0;
     }
 
     public static DataBaseInfo getInstance(){
@@ -27,18 +27,18 @@ public class DataBaseInfo {
     }
 
     //A VERIFIER
-    public void AddTableInfo(TableInfo table_add){
-        list_infos.add(table_add);
-        compteur_rel++;
+    public void AddTableInfo(TableInfo tableAdd){
+        listInfos.add(tableAdd);
+        compteurRel++;
     }
 
-    public TableInfo GetTableInfo (String nom_relation){
-        TableInfo sample_table = new TableInfo();
-        for (TableInfo tableInfo : list_infos) {
-            if(tableInfo.getNomRel().equals(nom_relation)){
-                sample_table = tableInfo;
+    public TableInfo GetTableInfo (String nomRelation){
+        TableInfo sampleTable = new TableInfo();
+        for (TableInfo tableInfo : listInfos) {
+            if(tableInfo.getNomRel().equals(nomRelation)){
+                sampleTable = tableInfo;
             }
         }
-        return sample_table;
+        return sampleTable;
     }
 }

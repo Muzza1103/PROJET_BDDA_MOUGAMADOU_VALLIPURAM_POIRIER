@@ -2,8 +2,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class Record {
-    private static TableInfo tabInfo;
-    private static ArrayList recvalues;
+    private TableInfo tabInfo;
+    private ArrayList<Object> recvalues;
     //CONSTANTE T
     private static int T;
 
@@ -199,7 +199,7 @@ public class Record {
         //on verifie si il y a des varstrings dans les recvalues
         //si oui, taille variable
         if(types_content.contains("VARSTRING(T)")){
-
+            
         } 
         //si non, taille fixe
         else {

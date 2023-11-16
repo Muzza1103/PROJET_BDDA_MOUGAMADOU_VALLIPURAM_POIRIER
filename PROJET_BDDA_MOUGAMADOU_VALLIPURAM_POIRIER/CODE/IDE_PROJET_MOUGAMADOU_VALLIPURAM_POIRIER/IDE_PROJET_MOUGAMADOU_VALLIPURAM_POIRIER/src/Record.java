@@ -134,7 +134,41 @@ public class Record {
             }
             //dernier element
             if(tabInfo.getColInfo(positionLastValue+1).GetTypCol() == "VARSTRING()"){
-                
+                String valeur_varstring = (String) recvalues.get(positionLastValue+1);
+                buffer.position(pos_valeur);
+                buffer.put((byte)recvalues.get(positionLastValue+1));
+                buffer.position(pos_index);
+                buffer.put((byte)pos_valeur);
+                pos_index ++;
+                buffer.position(pos_index);
+                buffer.put((byte)(positionLastValue+1+valeur_varstring.length()));
+                pos_valeur += valeur_varstring.length();
+            } else if(tabInfo.getColInfo(positionLastValue+1).GetTypCol() == "STRING(T)"){
+                buffer.position(pos_valeur);
+                buffer.put((byte)recvalues.get(positionLastValue+1));
+                buffer.position(pos_index);
+                buffer.put((byte)pos_valeur);
+                pos_index ++;
+                buffer.position(pos_index);
+                buffer.put((byte)(positionLastValue+1+T));
+            } else if(tabInfo.getColInfo(positionLastValue+1).GetTypCol() == "INT"){
+                int inter_int_variable = (int) recvalues.get(k);
+                buffer.position(pos_valeur);
+                buffer.put((byte)inter_int_variable);
+                buffer.position(pos_index);
+                buffer.put((byte)pos_valeur);
+                pos_index ++;
+                buffer.position(pos_index);
+                buffer.put((byte)(positionLastValue+1+Integer.BYTES));
+            } else if(tabInfo.getColInfo(positionLastValue+1).GetTypCol() == "FLOAT"){
+                float inter_float_variable = (float) recvalues.get(k);
+                buffer.position(pos_valeur);
+                buffer.put((byte)inter_float_variable);
+                buffer.position(pos_index);
+                buffer.put((byte)pos_valeur);
+                pos_index ++;
+                buffer.position(pos_index);
+                buffer.put((byte)(positionLastValue+1+Float.BYTES)); 
             }
 
 

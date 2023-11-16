@@ -3,11 +3,19 @@ import java.util.ArrayList;
 
 public class Record {
     private static TableInfo tabInfo;
-    private static ArrayList recvalues;
+    private static ArrayList<Object> recvalues;
 
     public Record(TableInfo tabInfo){
         this.tabInfo = tabInfo;
-        this.recvalues = null;
+        this.recvalues = new ArrayList<>();
+    }
+    
+    public Object getRecvalues() {
+    	return recvalues;
+    }
+    
+    public TableInfo getTabInfo() {
+    	return tabInfo;
     }
 
     public int WriteToBuffer(ByteBuffer buffer, int pos){
@@ -26,13 +34,13 @@ public class Record {
         }
 
         //Ecrire recvalues dans buffer si pas de varstring
-        int v =0;
+        int v = 0;
         for(TypeColonne t : typesContenus) {
         	if(t.getType().equals("VARSTRING")) {
-        		v= 1;
+        		v = 1;
         	}
         }
-        if(v==0) {
+        if(v == 0) {
         //if(!types_contenus.contains(TypeColonne i)){
             //on utilise le modèle taille fixe
             for(int i=0; i<recvalues.size(); i++){
@@ -122,10 +130,6 @@ public class Record {
         if(!recvalues.isEmpty()){
             recvalues.clear();
         }
-        
-
-        
-
         return taille;
     }
 }

@@ -49,7 +49,9 @@ public class Record {
             for(int i=0; i<recvalues.size(); i++){
                 //on vérifie le type de la relation
                 //gestion pour STRING
-                if(tabInfo.getColInfo(i).GetTypCol() == "STRING(T)"){
+                System.out.println("ICI LA VALEUR i à RECORD:52");
+                System.out.println(i);
+                if(tabInfo.getColInfo(i).GetTypCol().equals("STRING(T)")){
                     
                     buffer.position(pos);
 

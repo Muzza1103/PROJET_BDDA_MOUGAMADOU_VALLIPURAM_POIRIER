@@ -34,7 +34,7 @@ public class DBParams {
         Record0.InsertValues(recValues);
 
         ByteBuffer nvbuffer = ByteBuffer.allocate(80);
-
+        
         Record0.WriteToBuffer(nvbuffer, 0);
 
         System.out.println("hi");

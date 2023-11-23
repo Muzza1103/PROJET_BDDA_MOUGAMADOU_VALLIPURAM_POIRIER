@@ -19,7 +19,7 @@ public class DataBaseInfo implements Serializable {
         this.compteurRel = 0;
     }
     
-    private ArrayList getList() {
+    private ArrayList<TableInfo> getList() {
     	return listInfos;
     }
     
@@ -59,7 +59,7 @@ public class DataBaseInfo implements Serializable {
     		DataBaseInfo dbi = (DataBaseInfo) ois.readObject();
     		this.setList(dbi.getList());
     		this.setCompteur(getCompteur());
-    		
+    		ois.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,6 +81,7 @@ public class DataBaseInfo implements Serializable {
     		FileOutputStream fos = new FileOutputStream(file);
     		ObjectOutputStream oos = new ObjectOutputStream(fos);
     		oos.writeObject(this);
+    		oos.close();
     	}catch(FileNotFoundException e) {
     		System.out.println("Fichier non existant !");
     		

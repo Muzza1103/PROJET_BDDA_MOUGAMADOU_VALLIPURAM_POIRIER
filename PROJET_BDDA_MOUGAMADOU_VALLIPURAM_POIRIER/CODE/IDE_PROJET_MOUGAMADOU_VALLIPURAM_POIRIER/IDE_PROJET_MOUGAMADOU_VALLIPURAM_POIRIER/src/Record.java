@@ -16,7 +16,7 @@ public class Record {
     public ArrayList<String> extraireTypes(TableInfo table){
         ArrayList<String> listeTypes = new ArrayList<>();
         for(int i=0; i<table.getColInfoList().size(); i++){
-            if(!listeTypes.contains(table.getColInfo(i).GetTypCol())){
+            if(!listeTypes.contains(table.getColInfo(i).GetTypCol().getType())){
                 listeTypes.add(table.getColInfo(i).GetTypCol().getType());
             }
         }

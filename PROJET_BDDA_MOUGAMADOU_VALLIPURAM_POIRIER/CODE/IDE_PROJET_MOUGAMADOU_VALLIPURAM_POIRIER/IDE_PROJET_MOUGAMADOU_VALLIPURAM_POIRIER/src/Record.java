@@ -224,6 +224,13 @@ public class Record {
                     buff.position(bufferposz);
                     recvalues.add(buff.getInt());
                 }
+                if(tabInfo.getColInfo(ite).GetTypCol().contains("FLOAT")){
+                    bufferposz = buff.get(bufferposmove);
+                    buff.position(bufferposz);
+                    recvalues.add(buff.getFloat());
+                }if(tabInfo.getColInfo(ite).getTypCol().contains("VARSTRING(T)")){
+                    
+                }
             }
         } 
         //si non, taille fixe

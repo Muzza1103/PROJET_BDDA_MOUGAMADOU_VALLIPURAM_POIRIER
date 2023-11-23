@@ -5,11 +5,16 @@ public class Record {
     private TableInfo tabInfo;
     private ArrayList<Object> recvalues;
     //CONSTANTE T
-    private static int T;
+    private static int T = 20;
+
 
     public Record(TableInfo tabInfo){
         this.tabInfo = tabInfo;
         this.recvalues = null;
+    }
+
+    public void InsertValues(ArrayList<Object> recvalues){
+        this.recvalues = recvalues;
     }
 
     //on crée un méthode pour extraire les types de la tabinfo
@@ -22,7 +27,6 @@ public class Record {
         }
         return listeTypes;
     }
-    
 
 
     public int WriteToBuffer(ByteBuffer buffer, int pos){

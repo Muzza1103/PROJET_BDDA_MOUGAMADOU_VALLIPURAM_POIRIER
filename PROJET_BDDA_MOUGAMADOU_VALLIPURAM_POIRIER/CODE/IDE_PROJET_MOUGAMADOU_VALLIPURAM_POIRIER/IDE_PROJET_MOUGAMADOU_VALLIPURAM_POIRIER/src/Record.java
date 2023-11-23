@@ -199,7 +199,24 @@ public class Record {
         //on verifie si il y a des varstrings dans les recvalues
         //si oui, taille variable
         if(types_content.contains("VARSTRING(T)")){
-            
+            for(int ite = 0; ite<tabInfo.getColInfoList().size(); ite++){
+                if(tabInfo.getColInfo(ite).GetTypCol().contains("STRING(T)")){
+                    //on récupère la valeur indiquée à la position pos
+                    bufferposz = buff.get(bufferposmove);
+                    for(int iteite = 0; iteite<"STRING(T)".size(); iteite++){
+                        intermediaire += buff.get(bufferposz);
+                        bufferposz++;
+                    }
+                    recvalues.add(intermediaire);
+                    intermediaire="";
+                    bufferposmove++;
+                }
+                if(tabInfo.getColInfo(ite).GetTypCol().contains("INT")){
+                    bufferposz = buff.get(bufferposmove);
+                    buff.position(bufferposz);
+                    recvalues.add(buff.getInt());
+                }
+            }
         } 
         //si non, taille fixe
         else {
@@ -212,12 +229,22 @@ public class Record {
                     }
                     recvalues.add(intermediaire);
                     intermediaire="";
+                    buff.position(bufferposmove+"STRING(T)".size());
                 }
                 else if(tabInfo.getColInfo(m).GetTypCol().contains("INT")){
                     recvalues.add(buff.getInt());
-
-                } else {
+                    buff.position(bufferposmove+Integer.BYTES);
+                } else if(tabInfo.getColInfo(m).GetTypCol().contains("FLOAT")){
                     recvalues.add(buff.getFloat());
+                    buff.position(bufferposmove+Integer.BYTES);
+                } else {
+                    for(int ii=0;ii<"VARSTRING(T)".size(); ii++){
+                        intermediaire += buff.get(bufferposmove);
+                        bufferposmove++;
+                    }
+                    recvalues.add(intermediaire);
+                    intermediaire="";
+                    buff.position(bufferposmove+"STRING(T)".size());
                 }
             }
         }

@@ -33,7 +33,7 @@ public class Record {
                 object = null;
             }
         }*/
-        
+
         //extraire la liste des types dans la table
         ArrayList<String> types_contenus = new ArrayList<>();
         types_contenus = extraireTypes(tabInfo);
@@ -85,8 +85,10 @@ public class Record {
             int pos_valeur = recvalues.size()+1;
 
             int positionLastValue = 0;
+
+            int k;
             
-            for(int k = 0; k<recvalues.size()-1; k++){
+            for(k=0; k<recvalues.size()-1; k++){
                 buffer.position(pos_index);
                 buffer.put((byte)pos_valeur);
 
@@ -203,7 +205,7 @@ public class Record {
                 if(tabInfo.getColInfo(ite).GetTypCol().contains("STRING(T)")){
                     //on récupère la valeur indiquée à la position pos
                     bufferposz = buff.get(bufferposmove);
-                    for(int iteite = 0; iteite<"STRING(T)".size(); iteite++){
+                    for(int iteite = 0; iteite<T; iteite++){
                         intermediaire += buff.get(bufferposz);
                         bufferposz++;
                     }
@@ -223,13 +225,13 @@ public class Record {
             
             for(int m = 0; m<tabInfo.getColInfoList().size(); m++){
                 if(tabInfo.getColInfo(m).GetTypCol().contains("STRING(T)")){
-                    for(int ii=0;ii<"STRING(T)".size(); ii++){
+                    for(int ii=0;ii<T; ii++){
                         intermediaire += buff.get(bufferposmove);
                         bufferposmove++;
                     }
                     recvalues.add(intermediaire);
                     intermediaire="";
-                    buff.position(bufferposmove+"STRING(T)".size());
+                    buff.position(bufferposmove+T);
                 }
                 else if(tabInfo.getColInfo(m).GetTypCol().contains("INT")){
                     recvalues.add(buff.getInt());
@@ -238,13 +240,13 @@ public class Record {
                     recvalues.add(buff.getFloat());
                     buff.position(bufferposmove+Integer.BYTES);
                 } else {
-                    for(int ii=0;ii<"VARSTRING(T)".size(); ii++){
+                    for(int ii=0;ii<T; ii++){
                         intermediaire += buff.get(bufferposmove);
                         bufferposmove++;
                     }
                     recvalues.add(intermediaire);
                     intermediaire="";
-                    buff.position(bufferposmove+"STRING(T)".size());
+                    buff.position(bufferposmove+T);
                 }
             }
         }

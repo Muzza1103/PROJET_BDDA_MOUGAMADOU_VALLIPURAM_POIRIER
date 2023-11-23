@@ -1,13 +1,14 @@
 public class ColInfo {
 
-    private static String nomColonne;
-    private static TypeColonne typeColonne;
-    private static int t;
+    private String nomColonne;
+    private TypeColonne typeColonne;
+    private int t;
     
-    public ColInfo(String nomColonne, TypeColonne typeColonne, int t){
+    public ColInfo(String nomColonne, TypeColonne typeColonne){
         this.nomColonne = nomColonne;
         this.typeColonne = typeColonne;
-        this.t = t;
+        //this.t = t;
+        this.t = typeColonne.getOctet();
         
     }
 

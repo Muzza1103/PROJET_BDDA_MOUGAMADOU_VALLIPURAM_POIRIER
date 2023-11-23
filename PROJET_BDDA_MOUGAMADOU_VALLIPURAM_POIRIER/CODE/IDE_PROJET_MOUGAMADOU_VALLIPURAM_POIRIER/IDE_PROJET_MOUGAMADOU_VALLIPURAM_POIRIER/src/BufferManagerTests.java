@@ -6,9 +6,9 @@ public class BufferManagerTests {
 		DBParams.SGBDPageSize = 4096;
         DBParams.DMFileCount = 4;
         DBParams.frameCount = 2;
-        TestEcritureEtLecture();
+        //TestEcritureEtLecture();
         //TestEcritureEtLecture2();
-        //TestEcritureEtLecture3();
+        TestEcritureEtLecture3();
 	}
 	
 	public static void TestEcritureEtLecture() { //teste la gestion des buffers pour avoir les bons textes écrit dans les bons buffers

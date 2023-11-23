@@ -28,7 +28,7 @@ public final class DiskManager {
 	public PageId AllocPage() {
 		PageId pageAlloue = null;
 		if (pilePageLibre.empty()) {
-			for (int pageIdx = 0; pageIdx< PAGEIDMAX ;pageIdx ++){
+			for (int pageIdx = 0; pageIdx < PAGEIDMAX ;pageIdx ++){
 				for (int fileIdx = 0; fileIdx <DBParams.DMFileCount; fileIdx++){
 					PageId pageCree = new PageId(fileIdx, pageIdx);
 					if (!pilePageOccupe.contains(pageCree)){

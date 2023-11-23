@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TableInfo {
+public class TableInfo implements Serializable{
     private static String nom;
     private static int nbColonnes;
     private static ArrayList <ColInfo> colInfo;

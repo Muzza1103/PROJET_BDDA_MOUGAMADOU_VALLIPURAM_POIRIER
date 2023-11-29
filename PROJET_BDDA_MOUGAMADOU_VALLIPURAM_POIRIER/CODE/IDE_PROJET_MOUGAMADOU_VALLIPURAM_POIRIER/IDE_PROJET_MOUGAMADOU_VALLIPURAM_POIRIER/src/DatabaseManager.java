@@ -31,6 +31,36 @@ public class DatabaseManager {
 	}
 	
 	public void ProcessCommand(String commande) {
-		
+		String[] mots = commande.split(" ");
+			
+		switch (mots[0]){
+
+			case "CREATE":
+				if(mots[1].equals("TABLE")) {
+					
+					
+					
+					
+					CreateTableCommand ctc = new CreateTableCommand( ,  ,  ,);
+					ctc.execute();
+				}
+				break;
+			
+			case "RESETDB": // Voir si vraiment besoin de créer une classe ou non 
+				
+				break;
+			
+			case "INSERT":
+
+				break;
+				
+			case "SELECT":
+				
+				break;
+				
+			default:
+				System.out.println("Cette commande n'existe pas !");
+				break;
+		}
 	}
 }

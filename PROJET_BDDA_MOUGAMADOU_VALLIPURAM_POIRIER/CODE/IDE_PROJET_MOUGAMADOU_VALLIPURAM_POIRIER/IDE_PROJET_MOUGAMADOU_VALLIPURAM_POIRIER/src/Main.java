@@ -7,25 +7,24 @@ public class Main {
         DBParams.DMFileCount = 4;
         
         DiskManager dk = DiskManager.getInstance();
-        BufferManager bm = BufferManager.getInstance();
-        DataBaseInfo dbi = DataBaseInfo.getInstance();
         DatabaseManager dbm = DatabaseManager.getInstance();
         
         dbm.Init();
         
         try (Scanner sc = new Scanner(System.in)) {
-        	System.out.println("EXIT");
-        	System.out.println("AUTRE");
-        	String s = sc.next();
-        	if(s.equals("EXIT")) {
-        		dbm.Finish();
-        	}else {
-        		dbm.ProcessCommand(s);
+        	boolean inter=true;
+        	while(inter) {
+        		System.out.println ("Que voulez vous faire ?");
+        		String s = sc.next();
+        		if(s.equals("EXIT")) {
+        			dbm.Finish();
+        			inter=false;
+        		}else {
+        			dbm.ProcessCommand(s);
+        		}
         	}
-        	
 		}
         
-		System.out.println("Coucou Chef Picsou!");
 		
 	}
 }

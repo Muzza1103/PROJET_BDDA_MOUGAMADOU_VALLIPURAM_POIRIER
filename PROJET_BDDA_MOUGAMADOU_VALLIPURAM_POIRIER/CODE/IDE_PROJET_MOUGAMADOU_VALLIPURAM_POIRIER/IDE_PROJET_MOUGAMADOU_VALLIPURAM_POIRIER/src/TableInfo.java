@@ -5,11 +5,13 @@ public class TableInfo implements Serializable{
     private static String nom;
     private static int nbColonnes;
     private static ArrayList <ColInfo> colInfo;
+    private static PageId headerPageId;
 
-    public TableInfo(String nom, int nbColonnes){
+    public TableInfo(String nom, int nbColonnes,PageId headerPageId){
     	this.nom = nom;
     	this.nbColonnes = nbColonnes;
     	this.colInfo = new ArrayList<>();
+    	this.headerPageId=headerPageId;
 
     }
 
@@ -31,6 +33,10 @@ public class TableInfo implements Serializable{
 
     public void setColInfo(ArrayList<ColInfo> l) {
     	colInfo = l;
+    }
+    
+    public PageId getHeaderPageId() {
+    	return headerPageId;
     }
     
 }

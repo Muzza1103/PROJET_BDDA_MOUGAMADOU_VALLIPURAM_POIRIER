@@ -70,6 +70,7 @@ public final class DiskManager {
 				byte[] pageData = new byte[(int)DBParams.SGBDPageSize];
 				rf.read(pageData); //pageData prend les données de la lecture
             	buff.put(pageData); //on met les données de la lecture dans le buffer
+            	pageId.setOctetTaille((int)rf.length());
 				buff.flip();
 				rf.close();
 				pageId.incrNbreAcces();
@@ -88,7 +89,7 @@ public final class DiskManager {
             try {
             	//File file = new File(DBParams.DBPath+fileName);
 				RandomAccessFile rf = new RandomAccessFile(DBParams.DBPath+fileName, "rw");
-				rf.seek(pageId.getPageIdx() * DBParams.SGBDPageSize);
+				rf.seek(pageId.getPageIdx() * DBParams.SGBDPageSize + pageId.getOctetTaille() );
 				if (buff.remaining() <= DBParams.SGBDPageSize) { // Pour être sur que la quantité de données que l'on va écrire est plus petite que la taille de la page 
 					buff.flip();
 					byte[] pageData = new byte[buff.remaining()]; //Permet d'initialiser pageData avec la même taille que les données de l'écriture
@@ -126,5 +127,7 @@ public final class DiskManager {
 	}
 
 }
+
+
 
 

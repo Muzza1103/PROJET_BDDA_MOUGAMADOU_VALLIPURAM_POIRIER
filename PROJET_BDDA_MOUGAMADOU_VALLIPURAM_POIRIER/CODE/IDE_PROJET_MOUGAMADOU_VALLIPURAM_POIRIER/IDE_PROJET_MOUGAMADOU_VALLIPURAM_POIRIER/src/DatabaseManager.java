@@ -1,3 +1,6 @@
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
 
@@ -31,23 +34,46 @@ public class DatabaseManager {
 	}
 	
 	public void ProcessCommand(String commande) {
+
 		String[] mots = commande.split(" ");
-			
 		switch (mots[0]){
 
 			case "CREATE":
-				if(mots[1].equals("TABLE")) {
+					List<String> nomColonne = new ArrayList<>();
+					List<TypeColonne> typeColonne = new ArrayList<>();
+					String ligne = mots[3].substring(1,mots[3].length()-1);
+					String[] mots2 = ligne.split("[:,]");;
+					int nbrColonne;
+					for(int i = 0; i < mots2.length; i+=2 ) {
+						nomColonne.add(mots2[i]);
+						//System.out.println(mots2[i]);							
+						if(mots2[i+1].contains("STRING")||mots2[i+1].contains("VARSTRING")) {
+							System.out.println(mots2[i+1]);
+							int startIndex = mots2[i+1].indexOf("(");
+							int endIndex = mots2[i+1].indexOf(")");
+							//System.out.println(startIndex);
+							//System.out.println(endIndex);
+							String subString = mots2[i+1].substring(startIndex + 1,endIndex);
+							typeColonne.add(new TypeColonne(mots2[i+1],Integer.parseInt(subString)));
+						}else {
+							//System.out.println(mots2[i+1]);
+							typeColonne.add(new TypeColonne(mots2[i+1]));
 					
-					
-					
-					
-					CreateTableCommand ctc = new CreateTableCommand( ,  ,  ,);
-					ctc.execute();
+						}
+					nbrColonne = nomColonne.size();
+					CreateTableCommand ctc = new CreateTableCommand(mots[2], nbrColonne, nomColonne, typeColonne);
+					ctc.execute(); 
 				}
 				break;
 			
-			case "RESETDB": // Voir si vraiment besoin de créer une classe ou non 
-				
+			case "RESETDB":
+				for(int i=0;i<5;i++) {
+					String chemin = DBParams.DBPath+"F"+i+".bin"; 
+					File fichierASupprimer = new File(chemin);
+					if(fichierASupprimer.exists()) {
+						fichierASupprimer.delete();
+					}
+				}
 				break;
 			
 			case "INSERT":

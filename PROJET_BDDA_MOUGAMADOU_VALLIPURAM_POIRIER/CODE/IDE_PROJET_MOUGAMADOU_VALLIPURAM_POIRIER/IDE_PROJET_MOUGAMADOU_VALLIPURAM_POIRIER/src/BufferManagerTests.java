@@ -6,7 +6,7 @@ public class BufferManagerTests {
 		DBParams.SGBDPageSize = 4096;
         DBParams.DMFileCount = 4;
         DBParams.frameCount = 2;
-        //TestEcritureEtLecture();
+        TestEcritureEtLecture();
         //TestEcritureEtLecture2();
         TestEcritureEtLecture3();
 	}
@@ -76,7 +76,11 @@ public class BufferManagerTests {
 		System.out.println(lecture);
 		System.out.println("Lecture de la page : "+pageId2.toString());
 		System.out.println(lecture2);
-			
+		
+		bm.FreePage(pageId, 0);
+		bm.FreePage(pageId2, 0);
+		dk.DeallocPage(pageId);
+		
 	}
 	
 	public static void TestEcritureEtLecture2() { // Cas test où 4 pages sont crées tour à tour, vérifie que lorsque les pincount sont égaux et que les nombres d'accées sont égaux la page désalloué est la plus ancienne.
@@ -118,7 +122,7 @@ public class BufferManagerTests {
 	public static void TestEcritureEtLecture3() { // Teste le cas LFU ou les deux frames ont leur pin count égal a 0, la bufferManager est censé désallouer la page la moins utilisé 
 		DiskManager dk = DiskManager.getInstance();
 		BufferManager bm = BufferManager.getInstance();
-		
+		bm.afficheFrame();
 		PageId pageId = dk.AllocPage();
 		PageId pageId2 = dk.AllocPage();
 		PageId pageId3= dk.AllocPage();
@@ -144,27 +148,27 @@ public class BufferManagerTests {
 			System.out.println("Impossible d'allouer la page.");
 		}
 			
-		ByteBuffer bb = bm.GetPage(pageId);
+		ByteBuffer bb3 = bm.GetPage(pageId);
 		ByteBuffer bb2 = bm.GetPage(pageId2);
 		
 		String sb1 = "muzza!";
 		byte[] sbBytes = sb1.getBytes();
-		bb.rewind();
+		bb3.rewind();
 		
 		if (sbBytes.length <= DBParams.SGBDPageSize ){
-			bb.put(sbBytes);
+			bb3.put(sbBytes);
 		}
 			
-		dk.WritePage(pageId, bb); // Utilisation répété de PageId pour incrémenter l'utilisation de cette page
-		dk.ReadPage(pageId, bb);
-		bb.rewind();
-		dk.ReadPage(pageId, bb);
-		bb.rewind();
-		dk.ReadPage(pageId, bb);
+		dk.WritePage(pageId, bb3); // Utilisation répété de PageId pour incrémenter l'utilisation de cette page
+		dk.ReadPage(pageId, bb3);
+		bb3.rewind();
+		dk.ReadPage(pageId, bb3);
+		bb3.rewind();
+		dk.ReadPage(pageId, bb3);
 		
-		bb.rewind();
-		byte[] donneeLecture = new byte[bb.remaining()];
-		bb.get(donneeLecture);
+		bb3.rewind();
+		byte[] donneeLecture = new byte[bb3.remaining()];
+		bb3.get(donneeLecture);
 		String lecture = new String(donneeLecture);
 		System.out.println("Lecture de la page : "+pageId.toString());
 		System.out.println(lecture);

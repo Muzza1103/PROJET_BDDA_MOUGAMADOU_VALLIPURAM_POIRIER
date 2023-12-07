@@ -31,7 +31,6 @@ public final class BufferManager {
     	
     	for(Frame f : listFrames) {
     		if (f.getPageId() != null && f.getPageId().equals(ID_page)) {
-    			System.out.println("if(1)");
     			//le cas où la page est deja dans une des frame
     			f.incrPinCount();
     			//incrémentation de pinCount
@@ -40,16 +39,13 @@ public final class BufferManager {
     			return f.getByteBuffer();
     			//renvoie le contenu de la page
     		}else if (f.getPinCount() == 0) {
-    			System.out.println("elseif(1)");
                 if (f.getPageId() == null) {
-                	System.out.println("if(2)");
                 	//frame = vide , va etre utilisé pour la page
                     f.incrPinCount();
                     f.loadPage(ID_page);
                     f.getPageId().incrNbreAcces();
                     return f.getByteBuffer();
                 } else if (f.getPageId().getNbreAcces() < minAccessCount) {
-                	System.out.println("1");
                 	//trouve la frame avec le compteur d'acces min
                 	//pour respecter le LFU
                     lFU = f;
@@ -57,26 +53,12 @@ public final class BufferManager {
                 }
     		}
     	}
-    //	for(int i = 0; i < listFrames.size(); i++) {
-    //		if(listFrames.get(i).getPageId() == null && listFrames.get(i).getByteBuffer() == null ) {
-    //			listFrames.get(i).incrPinCount();
-    //			listFrames.get(i).getPageId().incrNbreAcces();
-    //			return listFrames.get(i).getByteBuffer();
-    //		}
-    //		else if(listFrames.get(i).getPinCount() == 0 ) {
-    //			listFrameZero.add(listFrames.get(i));
-    //		}	
-    //	}
     	 if (lFU != null) {
     		 this.FreePage(lFU.getPageId(), lFU.getValDirty());
-    		 System.out.println("2");
              lFU.loadPage(ID_page);
-             System.out.println("3");
              //charge la page dans LFU
              lFU.incrPinCount();
-             System.out.println("4");
              lFU.getPageId().incrNbreAcces();
-             System.out.println("5");
              return lFU.getByteBuffer();
          }
     	
@@ -108,6 +90,12 @@ public final class BufferManager {
              //Va permettre de reinitialiser le PinCount
              frame.resetPin_count();
          }
+    }
+    
+    public void videListe() {
+    	for(int i = 0; i < listFrames.size(); i++) {
+    		listFrames.remove(i);
+    	}
     }
     
     public void afficheFrame() {

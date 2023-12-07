@@ -263,7 +263,7 @@ public class Record {
                 } else if(tabInfo.getColInfo(m).GetTypCol().contains("FLOAT")){
                     recvalues.add(buff.getFloat());
                     buff.position(bufferposmove+Integer.BYTES);
-                } else {
+                } /*else {
                     for(int ii=0;ii<T; ii++){
                         intermediaire += buff.get(bufferposmove);
                         bufferposmove++;
@@ -271,7 +271,7 @@ public class Record {
                     recvalues.add(intermediaire);
                     intermediaire="";
                     buff.position(bufferposmove+T);
-                }
+                }*/
             }
         }
         

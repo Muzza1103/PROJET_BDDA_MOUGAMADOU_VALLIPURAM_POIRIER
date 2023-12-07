@@ -26,6 +26,7 @@ public class Record {
     public void InsertValues(ArrayList<Object> recvalues){
         this.recvalues = recvalues;
     }
+    
 
 
     public int WriteToBuffer(ByteBuffer buffer, int pos){
@@ -79,7 +80,7 @@ public class Record {
 
         else {
             //on utilise le modèle taille variable
-            //ByteBuffer nvbuff;
+            ByteBuffer nvbuff;
             //init le offset directory
             buffer.position(0);       
             buffer.put((byte)(recvalues.size()+1));
@@ -258,5 +259,8 @@ public class Record {
         
 
         return taille;
+    }
+    TableInfo getTabInfoRecord() {
+    	return this.tabInfo;
     }
 }

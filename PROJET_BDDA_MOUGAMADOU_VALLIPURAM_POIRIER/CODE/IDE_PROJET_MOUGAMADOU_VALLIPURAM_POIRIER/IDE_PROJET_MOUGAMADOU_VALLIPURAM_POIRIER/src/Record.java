@@ -228,8 +228,16 @@ public class Record {
                     bufferposz = buff.get(bufferposmove);
                     buff.position(bufferposz);
                     recvalues.add(buff.getFloat());
-                }if(tabInfo.getColInfo(ite).getTypCol().contains("VARSTRING(T)")){
-                    
+                }if(tabInfo.getColInfo(ite).GetTypCol().contains("VARSTRING(T)")){
+                    bufferposz = buff.get(bufferposmove);
+                    buff.position(bufferposz);
+                    int taille_init_var = bufferposz;
+                    bufferposmove++;
+                    int taille_du_varstring = buff.get(bufferposmove);
+                    for(int iteite = 0; iteite<taille_du_varstring - taille_init_var; iteite++){
+                        intermediaire += buff.get(bufferposz);
+                        bufferposz++;
+                    }
                 }
             }
         } 

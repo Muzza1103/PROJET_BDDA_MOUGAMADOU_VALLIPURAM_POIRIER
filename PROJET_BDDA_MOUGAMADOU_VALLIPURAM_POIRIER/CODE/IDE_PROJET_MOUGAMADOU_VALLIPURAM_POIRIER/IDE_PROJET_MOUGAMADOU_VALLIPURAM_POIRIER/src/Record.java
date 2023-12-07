@@ -238,6 +238,9 @@ public class Record {
                         intermediaire += buff.get(bufferposz);
                         bufferposz++;
                     }
+                    recvalues.add(intermediaire);
+                    intermediaire = "";
+                    bufferposmove++;
                 }
             }
         } 

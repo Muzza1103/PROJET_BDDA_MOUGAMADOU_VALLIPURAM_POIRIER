@@ -101,6 +101,7 @@ public class Record {
                 buffer.put((byte)pos_valeur);
 
                 if(tabInfo.getColInfo(k).GetTypCol()=="FLOAT"){
+                    System.out.println("writebuffer_FLOAT_taillevar");
                     float inter_float_variable = (float) recvalues.get(k);
                     buffer.position(pos_valeur);
                     buffer.put((byte)inter_float_variable);
@@ -122,8 +123,12 @@ public class Record {
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol()=="STRING(T)"){
+                    System.out.println("wr_STRING_taillevar");
+                    String valeur_string = (String) recvalues.get(k);
                     buffer.position(pos_valeur);
-                    buffer.put((byte)recvalues.get(k));
+                    for(int wr_str_tvar = 0; wr_str_tvar<valeur_string.length(); wr_str_tvar++){
+                        buffer.putChar(valeur_string.charAt(wr_str_tvar));
+                    }
                     buffer.position(pos_index);
                     buffer.put((byte)pos_valeur);
                     pos_index ++;
@@ -134,7 +139,9 @@ public class Record {
                     System.out.println("writebuffer_VARSTRING_taillevariable");
                     String valeur_varstring = (String) recvalues.get(k);
                     buffer.position(pos_valeur);
-                    buffer.put((byte)recvalues.get(k));
+                    for(int wr_varstring_tvar = 0; wr_varstring_tvar<valeur_varstring.length(); wr_varstring_tvar++){
+                        buffer.putChar(valeur_varstring.charAt(wr_varstring_tvar));
+                    }
                     buffer.position(pos_index);
                     buffer.put((byte)pos_valeur);
                     pos_index ++;
@@ -148,7 +155,9 @@ public class Record {
             if(tabInfo.getColInfo(positionLastValue+1).GetTypCol() == "VARSTRING()"){
                 String valeur_varstring = (String) recvalues.get(positionLastValue+1);
                 buffer.position(pos_valeur);
-                buffer.put((byte)recvalues.get(positionLastValue+1));
+                for(int wrlast_varstr_tvar = 0; wrlast_varstr_tvar<valeur_varstring.length(); wrlast_varstr_tvar++){
+                    buffer.putChar(valeur_varstring.charAt(wrlast_varstr_tvar));
+                }
                 buffer.position(pos_index);
                 buffer.put((byte)pos_valeur);
                 pos_index ++;
@@ -156,8 +165,11 @@ public class Record {
                 buffer.put((byte)(positionLastValue+1+valeur_varstring.length()));
                 pos_valeur += valeur_varstring.length();
             } else if(tabInfo.getColInfo(positionLastValue+1).GetTypCol() == "STRING(T)"){
+                String valeur_string_last = (String) recvalues.get(positionLastValue+1);
                 buffer.position(pos_valeur);
-                buffer.put((byte)recvalues.get(positionLastValue+1));
+                for(int wr_last_str_tvar = 0; wr_last_str_tvar<valeur_string_last.length(); wr_last_str_tvar++){
+                    buffer.putChar(valeur_string_last.charAt(wr_last_str_tvar));
+                }
                 buffer.position(pos_index);
                 buffer.put((byte)pos_valeur);
                 pos_index ++;

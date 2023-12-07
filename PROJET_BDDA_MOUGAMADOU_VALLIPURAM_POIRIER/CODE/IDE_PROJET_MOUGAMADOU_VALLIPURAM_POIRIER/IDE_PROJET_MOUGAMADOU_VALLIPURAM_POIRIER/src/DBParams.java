@@ -32,7 +32,7 @@ public class DBParams {
         Record Record0 = new Record(Table0);
         
         ArrayList<Object> recValues = new ArrayList<>();
-        String nom_0 = "Matthieu";
+        String nom_0 = "Prénom";
         int age_0 = 2;
         float taille_0 = 1.07f;
         String genre_0 = "M";

@@ -81,6 +81,7 @@ public class Record {
         }
 
         else {
+            System.out.println("writebuffer_passage_taille_var");
             //on utilise le modèle taille variable
             ByteBuffer nvbuff;
             //init le offset directory
@@ -95,6 +96,7 @@ public class Record {
             int k;
             
             for(k=0; k<recvalues.size()-1; k++){
+                System.out.println("envoi info");
                 buffer.position(pos_index);
                 buffer.put((byte)pos_valeur);
 
@@ -128,7 +130,8 @@ public class Record {
                     pos_valeur += T;
                 }
 
-                else if(tabInfo.getColInfo(k).GetTypCol() == "VARSTRING()"){
+                else if(tabInfo.getColInfo(k).GetTypCol() == "VARSTRING(T)"){
+                    System.out.println("writebuffer_VARSTRING_taillevariable");
                     String valeur_varstring = (String) recvalues.get(k);
                     buffer.position(pos_valeur);
                     buffer.put((byte)recvalues.get(k));

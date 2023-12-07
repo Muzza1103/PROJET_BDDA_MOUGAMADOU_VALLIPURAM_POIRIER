@@ -47,12 +47,12 @@ public class DBParams {
 
         Record0.readFromBuffer(nvbuffer, 0);
         System.out.println("fin tests");
-
-
     }
+
+    //récupéré sur www.java2s.com pour les tests
     public static void printBuffer(ByteBuffer buffer) {
             byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes);//from w w w . ja va  2s .  co m
+            buffer.get(bytes);
             System.out.println(Arrays.toString(bytes));
         }
 

@@ -144,7 +144,7 @@ public class Record {
                     }
                     buffer.position(pos_index);
                     buffer.put((byte)pos_valeur);
-                    pos_index ++;
+                    //pos_index ++;
                     pos_valeur += valeur_varstring.length();
                 }
 
@@ -252,11 +252,11 @@ public class Record {
                     int taille_du_varstring = buff.get(bufferposmove);
                     for(int iteite = 0; iteite<taille_du_varstring - taille_init_var; iteite++){
                         intermediaire += buff.get(bufferposz);
-                        bufferposz++;
+                        //bufferposz++;
                     }
                     recvalues.add(intermediaire);
                     intermediaire = "";
-                    bufferposmove++;
+                    //bufferposmove++;
                 }
             }
         } 

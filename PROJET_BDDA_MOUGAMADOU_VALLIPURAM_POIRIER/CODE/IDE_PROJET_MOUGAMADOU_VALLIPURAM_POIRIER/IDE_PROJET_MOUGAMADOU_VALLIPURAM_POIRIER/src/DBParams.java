@@ -32,9 +32,9 @@ public class DBParams {
         Record Record0 = new Record(Table0);
         
         ArrayList<Object> recValues = new ArrayList<>();
-        String nom_0 = "Prénom";
+        String nom_0 = "Prenom";
         int age_0 = 2;
-        float taille_0 = 1.07f;
+        float taille_0 = 1.76f;
         String genre_0 = "M";
 
         
@@ -51,10 +51,13 @@ public class DBParams {
         Record0.WriteToBuffer(nvbuffer, 0);
 
         System.out.println("hi");
+        System.out.println("affichage après écriture");
         printBuffer(nvbuffer);
         //System.out.println(Arrays.toString(nvbuffer));
 
         Record0.readFromBuffer(nvbuffer, 0);
+        System.out.println("affichage après lecture du buffer");
+        printBuffer(nvbuffer);
         System.out.println("fin tests");
     }
 
@@ -62,7 +65,7 @@ public class DBParams {
     public static void printBuffer(ByteBuffer buffer) {
             byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
-            System.out.println(Arrays.toString(bytes));
+            System.out.println((String) Arrays.toString(bytes));
         }
 
 }

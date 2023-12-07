@@ -17,6 +17,8 @@ public class FileManager {
 	public PageId createNewHeaderPage() {
 		PageId pageId = DiskManager.getInstance().AllocPage();
 		ByteBuffer buf = BufferManager.getInstance().GetPage(pageId);
+	
+		
 		// correspond aux pages factice
 		
 		buf.putInt(-1);
@@ -40,12 +42,12 @@ public class FileManager {
 	    }else {
 	    	int a =buf.getInt(0);
 	    	int b =buf.getInt(1);
-	    	bufpage.putInt(a);
-	    	bufpage.putInt(b);
+	    	bufpage.putInt(0,a);
+	    	bufpage.putInt(1,b);
 	    	BufferManager.getInstance().FreePage(page, 1);
 		    //Metre à jour dans la headerpage  
-		    buf.putInt(page.getFileIdx());
-		    buf.putInt(page.getPageIdx());
+		    buf.putInt(0,page.getFileIdx());
+		    buf.putInt(1,page.getPageIdx());
 		    BufferManager.getInstance().FreePage(tabInfo.getHeaderPageId(), 1);
 	    	}
 	    return page;
@@ -63,12 +65,56 @@ public class FileManager {
 		 //page pas existant dans la listelibre
 		 return null;
 	 }
+	 
+
 	 // par courir tous la liste est vérifé l'espace Libre 
-	  
-		 
+	 PageId page = new PageId (a,b);
+	 ByteBuffer buffparcour = BufferManager.getInstance().GetPage(page);
+	 // calcul espace libre
+	int posDebEspaceLibre =  buffparcour.getInt((int)DBParams.SGBDPageSize);
+	//position debut espace disponible 
+	int espacelibretableau = (int)DBParams.SGBDPageSize-posDebEspaceLibre;
+	int nbslotdir = buffparcour.getInt((int)DBParams.SGBDPageSize -1);
+	int tailletableauslot = nbslotdir *2;
+	int tailleespacelibre = espacelibretableau-tailletableauslot;
+	BufferManager.getInstance().FreePage(page, 1);
+	if(tailleespacelibre >=sizeRecord) {
+		return page;
+	}else {
+		return null;
 	}
-	public Recordid writeRecordToDataPage(Record record ,PageId pageid) {
-		
+	 
+	
+	
+	 
+	 
+	}
+	public RecordId writeRecordToDataPage(Record record ,PageId pageid) {
+		ByteBuffer buff = BufferManager.getInstance().GetPage(pageid);
+        int pos  = buff.getInt((int)DBParams.SGBDPageSize);
+	    record.WriteToBuffer(buff, pos);
+	    if( buff.capacity() == (int)DBParams.SGBDPageSize) {
+	    	ByteBuffer buff2 = BufferManager.getInstance().GetPage(record.getTabInfoRecord().getHeaderPageId());
+	    	 if((buff2.getInt(2)==-1 )&&(buff2.getInt(3)==0)) {// correspond au cas la liste est vide
+	 	    	// ecrire dans la headerpage   le pageId de la page 
+	 	    	buff2.putInt(2,pageid.getFileIdx());
+	 	    	buff2.putInt(3,pageid.getPageIdx());
+	 	    	BufferManager.getInstance().FreePage(record.getTabInfoRecord().getHeaderPageId(), 1);
+	 	    }else {
+	 	    	int a =buff2.getInt(2);
+	 	    	int b =buff2.getInt(3);
+	 	    	buff.putInt(2,a);
+	 	    	buff.putInt(3,b);
+	 	    	BufferManager.getInstance().FreePage(pageid, 1);
+	 		    //Metre à jour dans la headerpage  
+	 		    buff2.putInt(pageid.getFileIdx());
+	 		    buff2.putInt(pageid.getPageIdx());
+	 		    BufferManager.getInstance().FreePage(record.getTabInfoRecord().getHeaderPageId(), 1);
+	    	}
+	    }
+	    BufferManager.getInstance().FreePage(pageid, 1);
+	    RecordId id = new RecordId(pageid,pos);
+	    return id;
 	}
 
 }

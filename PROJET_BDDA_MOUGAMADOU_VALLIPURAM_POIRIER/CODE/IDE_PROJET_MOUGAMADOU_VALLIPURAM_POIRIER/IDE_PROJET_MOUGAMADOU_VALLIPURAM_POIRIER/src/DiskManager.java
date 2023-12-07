@@ -5,22 +5,30 @@ import java.nio.ByteBuffer;
 import java.io.File;
 import java.io.IOException;
 
-public class DiskManager {
+public final class DiskManager {
 	
+	private static DiskManager dk = null;
 	private Stack<PageId> pilePageLibre ;
 	private Stack<PageId> pilePageOccupe ;
 	private static final int PAGEIDMAX = 999;
 
-	public DiskManager() {
+	private DiskManager() {
 		pilePageLibre = new Stack<PageId>();
 		pilePageOccupe = new Stack<PageId>();
+	}
+	
+	public static DiskManager getInstance() {
+		if (dk == null) {
+			dk = new DiskManager();
+		}
+		return dk;
 	}
 
 	
 	public PageId AllocPage() {
 		PageId pageAlloue = null;
 		if (pilePageLibre.empty()) {
-			for (int pageIdx = 0; pageIdx< PAGEIDMAX ;pageIdx ++){
+			for (int pageIdx = 0; pageIdx < PAGEIDMAX ;pageIdx ++){
 				for (int fileIdx = 0; fileIdx <DBParams.DMFileCount; fileIdx++){
 					PageId pageCree = new PageId(fileIdx, pageIdx);
 					if (!pilePageOccupe.contains(pageCree)){
@@ -62,8 +70,10 @@ public class DiskManager {
 				byte[] pageData = new byte[(int)DBParams.SGBDPageSize];
 				rf.read(pageData); //pageData prend les données de la lecture
             	buff.put(pageData); //on met les données de la lecture dans le buffer
+            	pageId.setOctetTaille((int)rf.length());
 				buff.flip();
 				rf.close();
+				pageId.incrNbreAcces();
 			}catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("Erreur lors de la lecture de la page.");
@@ -79,13 +89,14 @@ public class DiskManager {
             try {
             	//File file = new File(DBParams.DBPath+fileName);
 				RandomAccessFile rf = new RandomAccessFile(DBParams.DBPath+fileName, "rw");
-				rf.seek(pageId.getPageIdx() * DBParams.SGBDPageSize);
+				rf.seek(pageId.getPageIdx() * DBParams.SGBDPageSize + pageId.getOctetTaille() );
 				if (buff.remaining() <= DBParams.SGBDPageSize) { // Pour être sur que la quantité de données que l'on va écrire est plus petite que la taille de la page 
 					buff.flip();
 					byte[] pageData = new byte[buff.remaining()]; //Permet d'initialiser pageData avec la même taille que les données de l'écriture
 					buff.get(pageData); // Copie les données du buffer dans pageData
 					rf.write(pageData); // Écrire le contenu de pageData dans le fichier
 					rf.close();
+					pageId.incrNbreAcces();
 				} else {
 					System.out.println("La quantité de données restantes est supérieure à la taille de la page.");
 				}
@@ -116,4 +127,3 @@ public class DiskManager {
 	}
 
 }
-

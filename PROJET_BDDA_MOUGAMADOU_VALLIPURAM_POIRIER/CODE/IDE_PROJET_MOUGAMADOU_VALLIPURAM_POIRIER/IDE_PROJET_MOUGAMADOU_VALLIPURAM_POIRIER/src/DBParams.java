@@ -6,19 +6,22 @@ public class DBParams {
     public static String DBPath;
     public static long SGBDPageSize;
     public static int DMFileCount;
-    public static int FrameCount;
+    public static int frameCount;
+
 
     public static void main (String[] args){
         System.out.println("test");
         DBPath = "/users/licence/in07091/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/DB/";
         SGBDPageSize = 4096;
         DMFileCount = 4;
-        FrameCount = 2;
+        frameCount = 2;
 
         ColInfo Colonne0 = new ColInfo("Nom", "VARSTRING(T)");
         ColInfo Colonne1 = new ColInfo("Age", "INT");
 
         ArrayList<ColInfo> ListeColonnes = new ArrayList<>();
+        ListeColonnes.add(Colonne0);
+        ListeColonnes.add(Colonne1);
 
         TableInfo Table0 = new TableInfo("nom-age", 2, ListeColonnes);
 
@@ -30,6 +33,7 @@ public class DBParams {
         
         recValues.add(nom_0);
         recValues.add(age_0);
+        System.out.println(recValues);
 
         Record0.InsertValues(recValues);
 
@@ -38,12 +42,18 @@ public class DBParams {
         Record0.WriteToBuffer(nvbuffer, 0);
 
         System.out.println("hi");
-        System.out.println(nvbuffer);
+        printBuffer(nvbuffer);
+        //System.out.println(Arrays.toString(nvbuffer));
 
         Record0.readFromBuffer(nvbuffer, 0);
-
+        System.out.println("fin tests");
 
 
     }
+    public static void printBuffer(ByteBuffer buffer) {
+            byte[] bytes = new byte[buffer.remaining()];
+            buffer.get(bytes);//from w w w . ja va  2s .  co m
+            System.out.println(Arrays.toString(bytes));
+        }
 
 }

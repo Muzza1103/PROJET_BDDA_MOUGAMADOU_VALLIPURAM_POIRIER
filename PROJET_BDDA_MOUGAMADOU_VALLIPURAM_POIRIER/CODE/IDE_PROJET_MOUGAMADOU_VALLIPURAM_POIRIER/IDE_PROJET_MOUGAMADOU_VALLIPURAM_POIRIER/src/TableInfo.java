@@ -11,6 +11,10 @@ public class TableInfo {
         this.col_info = col_info;
     }
 
+    public TableInfo(){
+        
+    }
+
     public String getNomRel(){
         return this.nom_rel;
     }

@@ -109,6 +109,7 @@ public class Record {
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol()=="INT"){
+                    System.out.println("PASSAGE PAR INT//TAILLE VARIABLE");
                     int inter_int_variable = (int) recvalues.get(k);
                     buffer.position(pos_valeur);
                     buffer.put((byte)inter_int_variable);

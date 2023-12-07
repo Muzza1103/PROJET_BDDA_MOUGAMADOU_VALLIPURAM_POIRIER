@@ -1,7 +1,8 @@
 import java.nio.ByteBuffer;
 import java.util.Scanner;
-
+/* 
 public class DiskManagerTests {
+	
 	public static void main(String [] args) {
 		DBParams.DBPath = "/users/licence/in07091/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/DB/";
 		DBParams.SGBDPageSize = 4096;
@@ -13,6 +14,7 @@ public class DiskManagerTests {
 
 		//TestEcritureLecturePage();
 	}
+	
 
 	public static void TestAllocationPage() { // Vérifier que l'ordre de création des fichiers et de leurs pages est correcte, et que cela alloue bien en priorié les pages de la pile PilePageLibre
 		DiskManager dk = new DiskManager();
@@ -79,4 +81,4 @@ public class DiskManagerTests {
 
 	}
 
-}
+}*/

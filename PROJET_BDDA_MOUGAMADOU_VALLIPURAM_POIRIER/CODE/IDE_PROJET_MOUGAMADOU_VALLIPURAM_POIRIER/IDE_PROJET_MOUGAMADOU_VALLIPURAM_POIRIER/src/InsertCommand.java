@@ -87,8 +87,9 @@ public class InsertCommand {
 			for (int i=0;i<rec.getRecValues().size();i++) {
 				taille+=(byte)rec.getRecValues().get(i);
 			}
-			ByteBuffer buffer = ByteBuffer.allocate(taille);
-			rec.WriteToBuffer(buffer, 0); // Ne pas oublier de vérifier si c'est bien 0, vérifier si c'est le bon a truc a faire
+			PageId pageId = fm.getFreeDataPageId(rec.getTabInfoRecord(), taille);
+			fm.writeRecordToDataPage(rec, pageId);
+			//Compléter
 		}
 	}
 		

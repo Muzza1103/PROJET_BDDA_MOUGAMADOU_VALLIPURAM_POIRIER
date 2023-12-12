@@ -9,11 +9,31 @@ public class CreateTableCommand {
 	private List<TypeColonne> typeCol;
 	
 	
-	public CreateTableCommand(String nom, int nbreCol, List<String> nomCol, List<TypeColonne> typeCol ) {
-		this.nom = nom;
-		this.nbreCol = nbreCol;
-		this.nomCol = nomCol;
-		this.typeCol = typeCol;
+	public CreateTableCommand(String[] mots) {
+		List<String> nomColonnes = new ArrayList<>();
+		List<TypeColonne> typeColonnes = new ArrayList<>();
+		String ligne = mots[3].substring(1,mots[3].length()-1);
+		String[] mots2 = ligne.split("[:,]");
+		int nbrColonne;					
+		for(int i = 0; i < mots2.length; i += 2 ) {
+			nomColonnes.add(mots2[i]);						
+			if( mots2[i+1].contains("STRING") || mots2[i+1].contains("VARSTRING") ) {
+				System.out.println(mots2[i+1]);
+				int startIndex = mots2[i+1].indexOf("(");
+				int endIndex = mots2[i+1].indexOf(")");
+				String subString = mots2[i+1].substring(startIndex + 1,endIndex);
+				typeColonnes.add(new TypeColonne(mots2[i+1],Integer.parseInt(subString)));
+			}else {
+				typeColonnes.add(new TypeColonne(mots2[i+1]));
+			
+			}
+		}
+		nbrColonne = nomColonnes.size();
+
+		this.nom = mots[2];
+		this.nbreCol = nbrColonne;
+		this.nomCol = nomColonnes;
+		this.typeCol = typeColonnes;
 	}
 	
 	private ArrayList<ColInfo> getColInfo(){

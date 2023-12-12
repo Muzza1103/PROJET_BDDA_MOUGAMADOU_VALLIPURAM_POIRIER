@@ -23,7 +23,7 @@ public class DatabaseManager {
 		BufferManager bm = BufferManager.getInstance();
 		
 		dbi.Init();
-		bm.GetPage(null);
+		//bm.GetPage(null);
 	}
 	
 	public void Finish() {
@@ -45,30 +45,15 @@ public class DatabaseManager {
 
 		String[] mots = commande.split(" ");
 		
-		List<String> nomColonnes = new ArrayList<>();
-		List<TypeColonne> typeColonnes = new ArrayList<>();
 		DataBaseInfo dbi = DataBaseInfo.getInstance();
 		switch (mots[0]){
 
 			case "CREATE":
-				String ligne = mots[3].substring(1,mots[3].length()-1);
-				String[] mots2 = ligne.split("[:,]");
-				int nbrColonne;					
-				for(int i = 0; i < mots2.length; i += 2 ) {
-					nomColonnes.add(mots2[i]);						
-					if( mots2[i+1].contains("STRING") || mots2[i+1].contains("VARSTRING") ) {
-						System.out.println(mots2[i+1]);
-						int startIndex = mots2[i+1].indexOf("(");
-						int endIndex = mots2[i+1].indexOf(")");
-						String subString = mots2[i+1].substring(startIndex + 1,endIndex);
-						typeColonnes.add(new TypeColonne(mots2[i+1],Integer.parseInt(subString)));
-					}else {
-						typeColonnes.add(new TypeColonne(mots2[i+1]));
-					
-					}
-					nbrColonne = nomColonnes.size();
-					CreateTableCommand ctc = new CreateTableCommand(mots[2], nbrColonne, nomColonnes, typeColonnes);
-					ctc.execute(); 
+				if (mots[1].equals("TABLE")) {
+					CreateTableCommand ctc = new CreateTableCommand(mots);
+					ctc.execute();
+				}else {
+					System.out.println("La commande rentrée comporte une erreur de syntaxe !");
 				}
 				break;
 			
@@ -84,45 +69,12 @@ public class DatabaseManager {
 				break;
 			
 			case "INSERT":
-				Record record = new Record(null);
-				List<String> motColonnes = new ArrayList<>();
-				
-				/*
-				 * Ajout du nom de la relation dans la relation
-				 */
-				String nomRelation = mots[2];
-				int numTable = -1;
-				String ligneInsert = mots[4].substring(1, mots[4].length()-1);
-				String[] mots3 = ligneInsert.split("(,)");
-				for(TableInfo ti : dbi.getList()) {
-					if(ti.getNom().equals(nomRelation)) {
-						numTable = dbi.getList().indexOf(ti);
-					}
+				if (mots[1].equals("TABLE") && mots[3].equals("VALUES")) {
+					InsertCommand ic = new InsertCommand(mots);
+					ic.execute();
+				}else {
+					System.out.println("La commande rentrée comporte une erreur de syntaxe !");
 				}
-				if (numTable != -1) {
-					Record rec = new Record(dbi.getList().get(numTable));
-					ArrayList<Object> recvalues = new ArrayList<>();
-					for(int i = 0; i < mots3.length; i++) {
-						typ //Changer pour vérifier le type
-						recvalues.add(mots3[i]);
-					}
-					int nbrColloneValide = 0;
-					for (int i=0;i<dbi.getList().get(numTable).getNbColonnes();i++) {
-						if()
-					}
-				}
-				
-				
-				ArrayList<Object> recvalues = new ArrayList<>();
-				for (int i=0;i<)
-				
-				for(int i = 0; i < mots3.length; i++) {
-					motColonnes.add(mots3[i]);
-				}
-				
-				
-				
-				
 				break;
 				
 			case "SELECT":

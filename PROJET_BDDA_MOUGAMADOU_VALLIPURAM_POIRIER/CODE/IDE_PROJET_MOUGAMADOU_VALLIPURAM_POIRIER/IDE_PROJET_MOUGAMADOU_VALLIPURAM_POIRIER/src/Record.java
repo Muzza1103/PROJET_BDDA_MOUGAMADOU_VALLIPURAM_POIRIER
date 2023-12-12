@@ -263,4 +263,7 @@ public class Record {
     TableInfo getTabInfoRecord() {
     	return this.tabInfo;
     }
+    public ArrayList<Object> getRecValues(){
+    	return recvalues;
+    }
 }

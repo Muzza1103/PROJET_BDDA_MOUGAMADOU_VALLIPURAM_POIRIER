@@ -1,5 +1,6 @@
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Record {
     private TableInfo tabInfo;
@@ -52,14 +53,17 @@ public class Record {
                 System.out.println("ICI LA VALEUR i à RECORD:52");
                 System.out.println(i);
                 if(tabInfo.getColInfo(i).GetTypCol().equals("STRING(T)")){
-                    
+                    System.out.println("wr_STRING_taillefixe");
+                    String valeur_string = (String) recvalues.get(i);
                     buffer.position(pos);
+                    for(int wr_str_tfix = 0; wr_str_tfix<valeur_string.length(); wr_str_tfix++){
+                        buffer.putChar(valeur_string.charAt(wr_str_tfix));
+                    }
 
-                    buffer.put((byte)recvalues.get(i));
-
+                    buffer.put((byte)pos);
                     pos += T;
-
                 } 
+
                 //gestion pour float & int
                 else {
                     buffer.position(pos);
@@ -195,11 +199,11 @@ public class Record {
                 buffer.put((byte)(positionLastValue+1+Float.BYTES)); 
             }
 
-
+            
 
             taille = pos_valeur;
         }
-        
+        printBuffer(buffer);
         return taille;
     }
 
@@ -292,4 +296,11 @@ public class Record {
         }
         return taille;
     }
+
+    //récupéré sur www.java2s.com pour les tests
+    public static void printBuffer(ByteBuffer buffer) {
+            byte[] bytes = new byte[buffer.remaining()];
+            buffer.get(bytes);
+            System.out.println((String) Arrays.toString(bytes));
+        }
 }

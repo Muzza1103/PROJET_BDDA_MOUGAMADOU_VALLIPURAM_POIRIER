@@ -30,8 +30,14 @@ public class InsertCommand {
 							if (getType(mots3[i]).equals("STRING") && mots3[i].length()< dbi.getList().get(numTable).getColInfo(i).GetTypCol().getOctet()) {
 								recvalues.add(mots3[i]);
 							}
-						}else if (getType(mots3[i]).equals(types.get(i))) {
-							recvalues.add(mots3[i]);
+						}else if (types.get(i)=="INT") {
+							if (getType(mots3[i]).equals(types.get(i))) {
+								recvalues.add(Integer.parseInt(mots3[i]));
+							}
+						}else if (types.get(i)=="FLOAT"){
+							if (getType(mots3[i]).equals(types.get(i))) {
+								recvalues.add(Float.parseFloat(mots3[i]));
+							}
 						}
 					}
 					if(recvalues.size() == dbi.getList().get(numTable).getNbColonnes()) {

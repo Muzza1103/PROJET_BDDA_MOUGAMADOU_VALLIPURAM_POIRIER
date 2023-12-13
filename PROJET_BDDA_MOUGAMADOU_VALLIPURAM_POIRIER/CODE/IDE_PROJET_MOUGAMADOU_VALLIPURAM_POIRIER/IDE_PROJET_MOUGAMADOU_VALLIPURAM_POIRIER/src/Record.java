@@ -1,4 +1,5 @@
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -55,27 +56,21 @@ public class Record {
                 if(tabInfo.getColInfo(i).GetTypCol().equals("STRING(T)")){
                     System.out.println("wr_STRING_taillefixe");
                     String valeur_string = (String) recvalues.get(i);
-                    buffer.position(pos);
-                    for(int wr_str_tfix = 0; wr_str_tfix<valeur_string.length(); wr_str_tfix++){
-                        buffer.putChar(valeur_string.charAt(wr_str_tfix));
-                    }
-
-                    buffer.put((byte)pos);
+                    writeInBufferString(buffer, pos, valeur_string);
                     pos += T;
                 } 
 
                 //gestion pour float & int
-                else {
-                    buffer.position(pos);
-                    
+                else {                    
                     if(tabInfo.getColInfo(i).GetTypCol() == "FLOAT"){
                         float inter_float = (float) recvalues.get(i);
-                        buffer.put((byte)inter_float);
+                        writeInBufferFloat(buffer, pos, inter_float);
+                        pos++;
                     } 
-                    
                     else if (tabInfo.getColInfo(i).GetTypCol() == "INT"){
+                        System.out.println("On passe par la nouvelle commande");
                         int inter_int = (int) recvalues.get(i);
-                        buffer.put((byte)inter_int);
+                        writeInBufferInt(buffer, pos, inter_int);
                     }
                     pos += Integer.BYTES;
                 }
@@ -98,6 +93,25 @@ public class Record {
             int positionLastValue = 0;
 
             int k;
+            int position_valeur = recvalues.size()+1;
+            //boucle pour insérer les valeurs de positions
+            buffer.position(pos);
+            buffer.putInt(position_valeur);
+            buffer.position(pos++);
+            for(int iteration=0; iteration<recvalues.size();iteration++){
+                if(tabInfo.getColInfo(iteration).GetTypCol()=="FLOAT"||tabInfo.getColInfo(iteration).GetTypCol()=="INT"){
+                    buffer.putInt(position_valeur++);
+                    buffer.position(pos++);
+                }
+                else if(tabInfo.getColInfo(iteration).GetTypCol()=="STRING(T)"){
+                    buffer.putInt(position_valeur+T);
+                    buffer.position(pos+T);
+                } else if(tabInfo.getColInfo(iteration).GetTypCol()=="VARSTRING(T)"){
+                    String elementAInserer = (String) recvalues.get(iteration);
+                    buffer.putInt(position_valeur+elementAInserer.length());
+                    buffer.position(pos+elementAInserer.length());
+                }
+            }
             
             for(k=0; k<recvalues.size()-1; k++){
                 System.out.println("envoi info");
@@ -207,6 +221,43 @@ public class Record {
         return taille;
     }
 
+    public void writeInBufferInt(ByteBuffer buff, int pos, int aEcrire){
+        System.out.println("écrit dans le buffer:"+ aEcrire);
+        try {
+            buff.position(pos);
+            buff.putInt(aEcrire);
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Le int "+aEcrire+" a causé une erreur");
+            System.out.println(e);
+        }
+    }
+
+    public void writeInBufferFloat(ByteBuffer buff, int pos, float aEcrire){
+        System.out.println("écrit dans le buffer:"+ aEcrire);
+        try{
+            buff.position(pos);
+            buff.putFloat(aEcrire);
+        } catch (Exception e){
+            System.out.println("Le float "+aEcrire+" a causé une erreur");
+            System.out.println(e);
+        }
+    }
+
+    public void writeInBufferString(ByteBuffer buff, int pos, String aEcrire){
+        System.out.println("écrit dans le buffer:"+aEcrire);
+        try {
+            buff.position(pos);
+            for(int wr_str_tfix = 0; wr_str_tfix<aEcrire.length(); wr_str_tfix++){
+                buff.putChar(aEcrire.charAt(wr_str_tfix));
+            }    
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Le string "+aEcrire+" a causé une erreur");
+            System.out.println(e);
+        }
+    }
+
     public int readFromBuffer(ByteBuffer buff, int pos){
         
         //extraire la liste des types dans la table
@@ -299,8 +350,7 @@ public class Record {
 
     //récupéré sur www.java2s.com pour les tests
     public static void printBuffer(ByteBuffer buffer) {
-            byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes);
-            System.out.println((String) Arrays.toString(bytes));
-        }
+        String s = StandardCharsets.UTF_8.decode(buffer).toString();
+        System.out.println(s+": buffer");
+    }
 }

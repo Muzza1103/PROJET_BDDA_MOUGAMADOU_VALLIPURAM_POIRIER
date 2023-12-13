@@ -27,15 +27,15 @@ public class DBParams {
         ListeColonnes.add(Colonne2);
         ListeColonnes.add(Colonne3);
 
-        TableInfo Table0 = new TableInfo("nom-age", 2, ListeColonnes);
+        TableInfo Table0 = new TableInfo("nom-age", 3, ListeColonnes);
 
         Record Record0 = new Record(Table0);
         
         ArrayList<Object> recValues = new ArrayList<>();
-        String nom_0 = "Prenom";
+        //String nom_0 = "Prenom";
         int age_0 = 20;
         float taille_0 = 1.76f;
-        String genre_0 = "M";
+        String genre_0 = "voila_20_characteres";
 
         
         //recValues.add(nom_0);
@@ -55,7 +55,7 @@ public class DBParams {
         printBuffer(nvbuffer);
         //System.out.println(Arrays.toString(nvbuffer));
 
-        Record0.readFromBuffer(nvbuffer, 0);
+        //Record0.readFromBuffer(nvbuffer, 0);
         System.out.println("affichage après lecture du buffer");
         printBuffer(nvbuffer);
         System.out.println("fin tests");

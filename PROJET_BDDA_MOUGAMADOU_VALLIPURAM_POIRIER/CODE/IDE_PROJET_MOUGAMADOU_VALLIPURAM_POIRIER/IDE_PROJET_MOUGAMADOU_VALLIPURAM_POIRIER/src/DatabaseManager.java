@@ -78,7 +78,10 @@ public class DatabaseManager {
 				break;
 				
 			case "SELECT":
-				
+				if (mots[2].equals("FROM")) {
+					SelectCommand sc = new SelectCommand(mots);
+					sc.execute();
+				}
 				break;
 			case "IMPORT":
 				if(mots[1].equals("INTO")) {

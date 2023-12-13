@@ -80,6 +80,12 @@ public class DatabaseManager {
 			case "SELECT":
 				
 				break;
+			case "IMPORT":
+				if(mots[1].equals("INTO")) {
+					ImportCommand ic = new ImportCommand(mots);
+					i
+				}
+				break;
 				
 			default:
 				System.out.println("Cette commande n'existe pas !");

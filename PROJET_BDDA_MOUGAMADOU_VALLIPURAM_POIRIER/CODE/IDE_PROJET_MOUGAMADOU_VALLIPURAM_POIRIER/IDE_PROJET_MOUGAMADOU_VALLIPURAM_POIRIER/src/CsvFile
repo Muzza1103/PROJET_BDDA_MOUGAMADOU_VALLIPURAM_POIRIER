@@ -1,0 +1,17 @@
+import java.io.File;
+import java.util.List;
+
+/*
+ * getData -> renvoie une liste de tableaux où chaque elem
+ * 			  de la liste represente une ligne du fich csv
+ * 			  chaque cellule du tableau correspond a une donne de la ligne
+ * source : https://thierry-leriche-dessirier.developpez.com/tutoriels/java/csv-avec-java/#L3-B
+ */
+/*
+ * J'utilise pas pour l'instant c'est juste au cas où ca peut etre utile
+ */
+public interface CsvFile {
+	File getFile();
+	List<String[]>getData();
+
+}

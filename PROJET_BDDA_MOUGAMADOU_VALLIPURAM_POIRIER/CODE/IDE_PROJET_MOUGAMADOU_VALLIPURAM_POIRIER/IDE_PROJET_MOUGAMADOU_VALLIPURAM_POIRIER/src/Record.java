@@ -92,128 +92,81 @@ public class Record {
 
             int positionLastValue = 0;
 
+            int tabPositions[] = new int[recvalues.size()];
             int k;
             int position_valeur = recvalues.size()+1;
             //boucle pour insérer les valeurs de positions
             buffer.position(pos);
             buffer.putInt(position_valeur);
             buffer.position(pos++);
-            for(int iteration=0; iteration<recvalues.size();iteration++){
+            tabPositions[0] = position_valeur;
+            for(int iteration=1; iteration<recvalues.size();iteration++){
                 if(tabInfo.getColInfo(iteration).GetTypCol()=="FLOAT"||tabInfo.getColInfo(iteration).GetTypCol()=="INT"){
                     buffer.putInt(position_valeur++);
                     buffer.position(pos++);
+                    tabPositions[iteration] = position_valeur;
                 }
                 else if(tabInfo.getColInfo(iteration).GetTypCol()=="STRING(T)"){
                     buffer.putInt(position_valeur+T);
                     buffer.position(pos+T);
+                    tabPositions[iteration] = position_valeur;
                 } else if(tabInfo.getColInfo(iteration).GetTypCol()=="VARSTRING(T)"){
                     String elementAInserer = (String) recvalues.get(iteration);
                     buffer.putInt(position_valeur+elementAInserer.length());
                     buffer.position(pos+elementAInserer.length());
+                    tabPositions[iteration] = position_valeur;
                 }
             }
+            //gestion du dernier element
+            if(tabInfo.getColInfo(recvalues.size()-1).GetTypCol()=="FLOAT" || tabInfo.getColInfo(recvalues.size()-1).GetTypCol()=="INT"){
+                buffer.putInt(position_valeur++);
+            } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol()=="STRING(T)"){
+                buffer.putInt(position_valeur+T);
+            } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol()=="VARSTRING(T)"){
+                String elementAInserer = (String) recvalues.get(recvalues.size()-1);
+                buffer.putInt(position_valeur+elementAInserer.length());
+            }
+
+            System.out.println(tabPositions.toString());
             
-            for(k=0; k<recvalues.size()-1; k++){
+            for(k=0; k<recvalues.size(); k++){
                 System.out.println("envoi info");
                 buffer.position(pos_index);
                 buffer.put((byte)pos_valeur);
 
+                int positionInsertion = 0;
+
+
+
                 if(tabInfo.getColInfo(k).GetTypCol()=="FLOAT"){
                     System.out.println("writebuffer_FLOAT_taillevar");
                     float inter_float_variable = (float) recvalues.get(k);
-                    buffer.position(pos_valeur);
-                    buffer.put((byte)inter_float_variable);
-                    buffer.position(pos_index);
-                    buffer.put((byte)pos_valeur);
-                    pos_index ++;
-                    pos_valeur += Float.BYTES;
+                    positionInsertion = tabPositions[k];
+                    writeInBufferFloat(buffer, positionInsertion, inter_float_variable);
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol()=="INT"){
                     System.out.println("PASSAGE PAR INT//TAILLE VARIABLE");
                     int inter_int_variable = (int) recvalues.get(k);
-                    buffer.position(pos_valeur);
-                    buffer.put((byte)inter_int_variable);
-                    buffer.position(pos_index);
-                    buffer.put((byte)pos_valeur);
-                    pos_index ++;
-                    pos_valeur += Integer.BYTES;
+                    positionInsertion = tabPositions[k];
+                    writeInBufferInt(buffer, positionInsertion, inter_int_variable);
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol()=="STRING(T)"){
                     System.out.println("wr_STRING_taillevar");
                     String valeur_string = (String) recvalues.get(k);
-                    buffer.position(pos_valeur);
-                    for(int wr_str_tvar = 0; wr_str_tvar<valeur_string.length(); wr_str_tvar++){
-                        buffer.putChar(valeur_string.charAt(wr_str_tvar));
-                    }
-                    buffer.position(pos_index);
-                    buffer.put((byte)pos_valeur);
-                    pos_index ++;
-                    pos_valeur += T;
+                    positionInsertion = tabPositions[k];
+                    writeInBufferString(buffer, positionInsertion, valeur_string);
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol() == "VARSTRING(T)"){
                     System.out.println("writebuffer_VARSTRING_taillevariable");
                     String valeur_varstring = (String) recvalues.get(k);
-                    buffer.position(pos_valeur);
-                    for(int wr_varstring_tvar = 0; wr_varstring_tvar<valeur_varstring.length(); wr_varstring_tvar++){
-                        buffer.putChar(valeur_varstring.charAt(wr_varstring_tvar));
-                    }
-                    buffer.position(pos_index);
-                    buffer.put((byte)pos_valeur);
-                    //pos_index ++;
-                    pos_valeur += valeur_varstring.length();
+                    positionInsertion = tabPositions[k];
+                    writeInBufferString(buffer, positionInsertion, valeur_varstring);
                 }
-
-                positionLastValue = k;
 
             }
-            //dernier element
-            if(tabInfo.getColInfo(positionLastValue+1).GetTypCol() == "VARSTRING()"){
-                String valeur_varstring = (String) recvalues.get(positionLastValue+1);
-                buffer.position(pos_valeur);
-                for(int wrlast_varstr_tvar = 0; wrlast_varstr_tvar<valeur_varstring.length(); wrlast_varstr_tvar++){
-                    buffer.putChar(valeur_varstring.charAt(wrlast_varstr_tvar));
-                }
-                buffer.position(pos_index);
-                buffer.put((byte)pos_valeur);
-                pos_index ++;
-                buffer.position(pos_index);
-                buffer.put((byte)(positionLastValue+1+valeur_varstring.length()));
-                pos_valeur += valeur_varstring.length();
-            } else if(tabInfo.getColInfo(positionLastValue+1).GetTypCol() == "STRING(T)"){
-                String valeur_string_last = (String) recvalues.get(positionLastValue+1);
-                buffer.position(pos_valeur);
-                for(int wr_last_str_tvar = 0; wr_last_str_tvar<valeur_string_last.length(); wr_last_str_tvar++){
-                    buffer.putChar(valeur_string_last.charAt(wr_last_str_tvar));
-                }
-                buffer.position(pos_index);
-                buffer.put((byte)pos_valeur);
-                pos_index ++;
-                buffer.position(pos_index);
-                buffer.put((byte)(positionLastValue+1+T));
-            } else if(tabInfo.getColInfo(positionLastValue+1).GetTypCol() == "INT"){
-                int inter_int_variable = (int) recvalues.get(k);
-                buffer.position(pos_valeur);
-                buffer.put((byte)inter_int_variable);
-                buffer.position(pos_index);
-                buffer.put((byte)pos_valeur);
-                pos_index ++;
-                buffer.position(pos_index);
-                buffer.put((byte)(positionLastValue+1+Integer.BYTES));
-            } else if(tabInfo.getColInfo(positionLastValue+1).GetTypCol() == "FLOAT"){
-                float inter_float_variable = (float) recvalues.get(k);
-                buffer.position(pos_valeur);
-                buffer.put((byte)inter_float_variable);
-                buffer.position(pos_index);
-                buffer.put((byte)pos_valeur);
-                pos_index ++;
-                buffer.position(pos_index);
-                buffer.put((byte)(positionLastValue+1+Float.BYTES)); 
-            }
-
-            
 
             taille = pos_valeur;
         }
@@ -350,7 +303,8 @@ public class Record {
 
     //récupéré sur www.java2s.com pour les tests
     public static void printBuffer(ByteBuffer buffer) {
-        String s = StandardCharsets.UTF_8.decode(buffer).toString();
-        System.out.println(s+": buffer");
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        System.out.println((String) Arrays.toString(bytes));
     }
 }

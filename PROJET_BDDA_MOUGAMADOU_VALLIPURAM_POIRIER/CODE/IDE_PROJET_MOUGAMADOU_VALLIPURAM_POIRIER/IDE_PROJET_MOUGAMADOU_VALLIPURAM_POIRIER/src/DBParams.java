@@ -16,29 +16,29 @@ public class DBParams {
         DMFileCount = 4;
         frameCount = 2;
 
-        //ColInfo Colonne0 = new ColInfo("Nom", "VARSTRING(T)");
+        ColInfo Colonne0 = new ColInfo("Nom", "VARSTRING(T)");
         ColInfo Colonne1 = new ColInfo("Age", "INT");
         ColInfo Colonne2 = new ColInfo("Taille", "FLOAT");
         ColInfo Colonne3 = new ColInfo("Genre", "STRING(T)");
 
         ArrayList<ColInfo> ListeColonnes = new ArrayList<>();
-        //ListeColonnes.add(Colonne0);
+        ListeColonnes.add(Colonne0);
         ListeColonnes.add(Colonne1);
         ListeColonnes.add(Colonne2);
         ListeColonnes.add(Colonne3);
 
-        TableInfo Table0 = new TableInfo("nom-age", 3, ListeColonnes);
+        TableInfo Table0 = new TableInfo("nom-age", 4, ListeColonnes);
 
         Record Record0 = new Record(Table0);
         
         ArrayList<Object> recValues = new ArrayList<>();
-        //String nom_0 = "Prenom";
+        String nom_0 = "MonPrenom";
         int age_0 = 20;
         float taille_0 = 1.76f;
         String genre_0 = "voila_20_characteres";
 
         
-        //recValues.add(nom_0);
+        recValues.add(nom_0);
         recValues.add(age_0);
         recValues.add(taille_0);
         recValues.add(genre_0);
@@ -66,6 +66,6 @@ public class DBParams {
             byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
             System.out.println((String) Arrays.toString(bytes));
-        }
+    }
 
 }

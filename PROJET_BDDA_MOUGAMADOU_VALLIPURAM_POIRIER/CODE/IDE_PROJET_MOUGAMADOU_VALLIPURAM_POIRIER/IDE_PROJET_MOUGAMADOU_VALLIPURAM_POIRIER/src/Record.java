@@ -9,6 +9,9 @@ public class Record {
     //CONSTANTE T
     private static int T = 20;
 
+    public Record(){
+        
+    }
 
     public Record(TableInfo tabInfo){
         this.tabInfo = tabInfo;

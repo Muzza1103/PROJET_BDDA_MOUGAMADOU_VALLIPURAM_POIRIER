@@ -7,7 +7,7 @@ public class Record {
     private TableInfo tabInfo;
     private ArrayList<Object> recvalues;
     //CONSTANTE T
-    private static int T = 3;
+    private static int T = 9;
 
     public Record(){
 
@@ -54,8 +54,6 @@ public class Record {
             for(int i=0; i<recvalues.size(); i++){
                 //on vérifie le type de la relation
                 //gestion pour STRING
-                System.out.println("ICI LA VALEUR i à RECORD:52");
-                System.out.println(i);
                 if(tabInfo.getColInfo(i).GetTypCol().equals("STRING(T)")){
                     System.out.println("wr_STRING_taillefixe");
                     String valeur_string = (String) recvalues.get(i);
@@ -200,6 +198,7 @@ public class Record {
         }
     }
 
+    //Cette classe permet d'écrire un String dans le buffer
     public void writeInBufferString(ByteBuffer buff, int pos, String aEcrire){
         System.out.println("écrit dans le buffer:"+aEcrire);
         try {
@@ -285,14 +284,14 @@ public class Record {
                     System.out.println("valeur string: "+intermediaire);
                     recvalues.add(intermediaire);
                     intermediaire="";
-                    buff.position(bufferposmove+T);
+                    //buff.position(bufferposmove+T);
                 }
                 else if(tabInfo.getColInfo(m).GetTypCol().contains("INT")){
-                    int inter_int_fix_read = buff.getInt(bufferposmove);
-                    recvalues.add(inter_int_fix_read);
+                    readIntFromBuffer(buff, bufferposmove);
                     buff.position(bufferposmove+Integer.BYTES);
-                } else if(tabInfo.getColInfo(m).GetTypCol().contains("FLOAT")){
-                    recvalues.add(buff.getFloat());
+                } 
+                else if(tabInfo.getColInfo(m).GetTypCol().contains("FLOAT")){
+                    readFloatFromBuffer(buff, bufferposmove);
                     buff.position(bufferposmove+Integer.BYTES);
                 } /*else {
                     for(int ii=0;ii<T; ii++){
@@ -306,6 +305,28 @@ public class Record {
             }
         }
         return taille;
+    }
+
+    public void readIntFromBuffer(ByteBuffer buffer, int pos){
+        try {
+            int inter = buffer.getInt(pos);
+            recvalues.add(inter);
+            System.out.println("Int intégré à recvalues :"+inter);
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Exception caused by :"+e);
+        }
+    }
+
+    public void readFloatFromBuffer(ByteBuffer buffer, int pos){
+        try {
+            float inter = buffer.getFloat(pos);
+            recvalues.add(inter);
+            System.out.println("Float intégré à recvalues :"+inter);
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Exception caused by :"+e);
+        }
     }
 
     //récupéré sur www.java2s.com pour les tests

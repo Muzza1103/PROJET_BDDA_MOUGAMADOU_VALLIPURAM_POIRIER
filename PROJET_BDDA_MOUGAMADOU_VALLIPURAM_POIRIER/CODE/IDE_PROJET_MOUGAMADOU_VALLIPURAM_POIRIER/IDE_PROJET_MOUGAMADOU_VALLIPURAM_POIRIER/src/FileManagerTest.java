@@ -28,16 +28,19 @@ public class FileManagerTest {
         DBParams.frameCount = 2;
         BufferManager bm = BufferManager.getInstance();
         DiskManager dk = DiskManager.getInstance();
-        PageId page = dk.AllocPage();
         //System.out.println(page.toString());  
         String nom = "Ti";
         int colonne = 2;
-        TableInfo tab = new TableInfo(nom,colonne,page);
+        int taille = 34;
         PageId pageheader = TestcreatHeaderPage();
+        TableInfo tab = new TableInfo(nom,colonne,pageheader);
         PageId pageData = TestaddDataPage(tab);
+        PageId pageDatab = TestaddDataPage(tab);
+        System.out.println(pageData.toString());
+        System.out.println(pageDatab.toString());
 		Record rec = new Record(tab);
-		RecordId ri = TestwriteRecordToDataPage(rec,pageData);
-		PageId pagefree = TestgetFreeDataPageId(tab,colonne);
+		//RecordId ri = TestwriteRecordToDataPage(rec,pageData);
+		PageId pagefree = TestgetFreeDataPageId(tab,taille);
        
         	
 	    

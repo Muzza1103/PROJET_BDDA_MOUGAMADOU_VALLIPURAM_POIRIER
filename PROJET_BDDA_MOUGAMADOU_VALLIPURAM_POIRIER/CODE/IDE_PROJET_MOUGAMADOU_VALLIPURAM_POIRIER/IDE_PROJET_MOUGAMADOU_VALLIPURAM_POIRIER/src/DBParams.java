@@ -10,8 +10,8 @@ public class DBParams {
 
 
     public static void main (String[] args){
-        //RecordTests.runRecordTests();
-        RecordTests.testsTailleFixe();
+        RecordTests.runRecordTests();
+        //RecordTests.testsTailleFixe();
     }
 
 }

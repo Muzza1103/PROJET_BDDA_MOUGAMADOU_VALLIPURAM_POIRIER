@@ -66,8 +66,8 @@ public class RecordTests {
 
         ArrayList<Object> recValues = new ArrayList<>();
         int poids_0 = 70;
-        float taille_0 = 1.76f;
-        String nat_0 = "FRA";
+        float taille_0 = 2.07f;
+        String nat_0 = "ITA";
 
         
         recValues.add(poids_0);
@@ -83,12 +83,12 @@ public class RecordTests {
 
         System.out.println("hi");
         System.out.println("affichage après écriture");
-        printBuffer(nvbuffer);
+        //printBuffer(nvbuffer);
         //System.out.println(Arrays.toString(nvbuffer));
 
         record0.readFromBuffer(nvbuffer, 0);
-        System.out.println("affichage après lecture du buffer");
-        printBuffer(nvbuffer);
+        //System.out.println("affichage après lecture du buffer");
+        //printBuffer(nvbuffer);
         System.out.println("fin tests");
 
     }

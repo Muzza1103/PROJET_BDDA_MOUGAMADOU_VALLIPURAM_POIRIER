@@ -49,6 +49,50 @@ public class RecordTests {
         System.out.println("fin tests");
     }
 
+    public static void testsTailleFixe(){
+        ColInfo Colonne0 = new ColInfo("poids", "INT");
+        ColInfo Colonne1 = new ColInfo("taille", "FLOAT");
+        ColInfo Colonne2 = new ColInfo("nationalite", "STRING(T)");
+
+        ArrayList<ColInfo> ListeColonne = new ArrayList<>();
+        
+        ListeColonne.add(Colonne0);
+        ListeColonne.add(Colonne1);
+        ListeColonne.add(Colonne2);
+
+        TableInfo tabInfo = new TableInfo("poids-taille-nat", 3, ListeColonne);
+
+        Record record0 = new Record(tabInfo);
+
+        ArrayList<Object> recValues = new ArrayList<>();
+        int poids_0 = 70;
+        float taille_0 = 1.76f;
+        String nat_0 = "FRA";
+
+        
+        recValues.add(poids_0);
+        recValues.add(taille_0);
+        recValues.add(nat_0);
+        System.out.println(recValues);
+
+        record0.InsertValues(recValues);
+
+        ByteBuffer nvbuffer = ByteBuffer.allocate(80);
+
+        record0.WriteToBuffer(nvbuffer, 0);
+
+        System.out.println("hi");
+        System.out.println("affichage après écriture");
+        printBuffer(nvbuffer);
+        //System.out.println(Arrays.toString(nvbuffer));
+
+        record0.readFromBuffer(nvbuffer, 0);
+        System.out.println("affichage après lecture du buffer");
+        printBuffer(nvbuffer);
+        System.out.println("fin tests");
+
+    }
+
     //récupéré sur www.java2s.com pour les tests
     public static void printBuffer(ByteBuffer buffer) {
             byte[] bytes = new byte[buffer.remaining()];

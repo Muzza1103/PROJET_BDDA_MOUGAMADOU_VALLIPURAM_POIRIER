@@ -7,10 +7,10 @@ public class Record {
     private TableInfo tabInfo;
     private ArrayList<Object> recvalues;
     //CONSTANTE T
-    private static int T = 20;
+    private static int T = 3;
 
     public Record(){
-        
+
     }
 
     public Record(TableInfo tabInfo){
@@ -206,6 +206,7 @@ public class Record {
             buff.position(pos);
             for(int wr_str_tfix = 0; wr_str_tfix<aEcrire.length(); wr_str_tfix++){
                 buff.putChar(aEcrire.charAt(wr_str_tfix));
+                //System.out.print("caractère écrit: "+aEcrire.charAt(wr_str_tfix)+" ");
             }    
         } catch (Exception e) {
             // TODO: handle exception
@@ -239,9 +240,10 @@ public class Record {
                     //on récupère la valeur indiquée à la position pos
                     bufferposz = buff.get(bufferposmove);
                     for(int iteite = 0; iteite<T; iteite++){
-                        intermediaire += buff.get(bufferposz);
+                        intermediaire += buff.getChar(bufferposz);
                         bufferposz++;
                     }
+                    System.out.println("Valeur intérmédiaire:" +intermediaire);
                     recvalues.add(intermediaire);
                     intermediaire="";
                     bufferposmove++;
@@ -277,15 +279,17 @@ public class Record {
             for(int m = 0; m<tabInfo.getColInfoList().size(); m++){
                 if(tabInfo.getColInfo(m).GetTypCol().contains("STRING(T)")){
                     for(int ii=0;ii<T; ii++){
-                        intermediaire += buff.get(bufferposmove);
+                        intermediaire += buff.getChar(bufferposmove);
                         bufferposmove++;
                     }
+                    System.out.println("valeur string: "+intermediaire);
                     recvalues.add(intermediaire);
                     intermediaire="";
                     buff.position(bufferposmove+T);
                 }
                 else if(tabInfo.getColInfo(m).GetTypCol().contains("INT")){
-                    recvalues.add(buff.getInt());
+                    int inter_int_fix_read = buff.getInt(bufferposmove);
+                    recvalues.add(inter_int_fix_read);
                     buff.position(bufferposmove+Integer.BYTES);
                 } else if(tabInfo.getColInfo(m).GetTypCol().contains("FLOAT")){
                     recvalues.add(buff.getFloat());

@@ -20,7 +20,7 @@ public class RecordIterator {
         int val = 1;
         //signale qu'on utilise plus l'itérateur 
         //libère la page de donnée auprès du BM
-        //BufferManager.FreePage(pageID, val);
+        
     }
 
     public void reset(){

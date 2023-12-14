@@ -55,7 +55,7 @@ public class DBParams {
         printBuffer(nvbuffer);
         //System.out.println(Arrays.toString(nvbuffer));
 
-        //Record0.readFromBuffer(nvbuffer, 0);
+        Record0.readFromBuffer(nvbuffer, 0);
         System.out.println("affichage après lecture du buffer");
         printBuffer(nvbuffer);
         System.out.println("fin tests");

@@ -28,6 +28,7 @@ public final class BufferManager {
     	//ByteBuffer byteB = ByteBuffer.allocate((int)DBParams.SGBDPageSize);
     	Frame lFU = null; //frame de la page correspondant à LFU
     	int minAccessCount = Integer.MAX_VALUE;//le compteur du minimum d'accès
+    	DiskManager dk = DiskManager.getInstance();
     	
     	for(Frame f : listFrames) {
     		if (f.getPageId() != null && f.getPageId().equals(ID_page)) {
@@ -36,31 +37,43 @@ public final class BufferManager {
     			//incrémentation de pinCount
     			f.getPageId().incrNbreAcces();
     			//incrémente le compteur d'accès à la page
+    			System.out.println("trouver page");
+    			dk.ReadPage(ID_page, f.getByteBuffer());
     			return f.getByteBuffer();
     			//renvoie le contenu de la page
-    		}else if (f.getPinCount() == 0) {
-                if (f.getPageId() == null) {
+    		}
+    	}
+    	for(Frame fr : listFrames) { 		
+    		if (fr.getPinCount() == 0) {
+                if (fr.getPageId() == null) {
                 	//frame = vide , va etre utilisé pour la page
-                    f.incrPinCount();
-                    f.loadPage(ID_page);
-                    f.getPageId().incrNbreAcces();
-                    return f.getByteBuffer();
-                } else if (f.getPageId().getNbreAcces() < minAccessCount) {
-                	//trouve la frame avec le compteur d'acces min
-                	//pour respecter le LFU
-                    lFU = f;
-                    minAccessCount = f.getPageId().getNbreAcces();
+                    fr.incrPinCount();
+                    fr.loadPage(ID_page);
+                    fr.getPageId().incrNbreAcces();
+                    System.out.println("case vide");
+                    dk.ReadPage(ID_page, fr.getByteBuffer());
+                    return fr.getByteBuffer();
                 }
     		}
     	}
-    	 if (lFU != null) {
+        for (Frame fr : listFrames) {            
+                if (fr.getPageId().getNbreAcces() < minAccessCount) {
+                	//trouve la frame avec le compteur d'acces min
+                	//pour respecter le LFU
+                    lFU = fr;
+                    minAccessCount = fr.getPageId().getNbreAcces();
+                }
+                
+    	}
+    	if (lFU != null) {
     		 this.FreePage(lFU.getPageId(), lFU.getValDirty());
              lFU.loadPage(ID_page);
              //charge la page dans LFU
              lFU.incrPinCount();
              lFU.getPageId().incrNbreAcces();
+             dk.ReadPage(ID_page, lFU.getByteBuffer());
              return lFU.getByteBuffer();
-         }
+        }
     	
     	return null;
     }

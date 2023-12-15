@@ -32,16 +32,23 @@ public class FileManager {
 	public PageId addDataPage(TableInfo tabInfo) {
 		PageId page = DiskManager.getInstance().AllocPage();// correspond a la datapage 
 	    ByteBuffer bufpage = BufferManager.getInstance().GetPage(page);
-	    System.out.println(bufpage.limit());
+	    //System.out.println(bufpage.limit());
 	    ByteBuffer buf = BufferManager.getInstance().GetPage(tabInfo.getHeaderPageId());
-	    System.out.println(buf.getInt(0));
-	    System.out.println(buf.getInt(4));
+	    //System.out.println(buf.getInt(0));
+	    //System.out.println(buf.getInt(4));
 	    if((buf.getInt(0)==-1 )&&(buf.getInt(4)==0)) {// correspond au cas la liste est vide
 	    	// ecrire dans la headerpage   le pageId de la page data 
-	    	buf.rewind();
-	    	buf.putInt(0,page.getFileIdx());
-	    	buf.putInt(4,page.getPageIdx());
+	    	buf.position(0);
+	    	buf.putInt(page.getFileIdx());
+	    	buf.putInt(page.getPageIdx());
+	    	bufpage.position(0);
 	    	bufpage.putInt(-1);
+	    	bufpage.putInt(0);
+	    	int espacelibre = bufpage.capacity()-4;//4096-4
+	    	bufpage.position(espacelibre);
+	    	bufpage.putInt(8);
+	    	int nombredeslotRecord =  bufpage.capacity()-8;//4096-8
+	    	bufpage.position(nombredeslotRecord);
 	    	bufpage.putInt(0);
 	    	//System.out.println(bufpage.position());
 	    	BufferManager.getInstance().FreePage(page, 1);
@@ -51,14 +58,20 @@ public class FileManager {
 	    
 	    	int a =buf.getInt(0);
 	    	int b =buf.getInt(4);
-	    	System.out.println(a);
 	    	bufpage.position(0);
 	    	bufpage.putInt(a);
 	    	bufpage.putInt(b);
+	    	int espacelibre = bufpage.capacity()-4;//4096-4
+	    	bufpage.position(espacelibre);
+	    	bufpage.putInt(8);
+	    	int nombredeslotRecord =  bufpage.capacity()-8;
+	    	bufpage.position(nombredeslotRecord);//4096-8
+	    	bufpage.putInt(0);
 	    	BufferManager.getInstance().FreePage(page, 1);
 		    //Metre à jour dans la headerpage
-		    buf.putInt(0,page.getFileIdx());
-		    buf.putInt(4,page.getPageIdx());
+	    	buf.position(0);
+		    buf.putInt(page.getFileIdx());
+		    buf.putInt(page.getPageIdx());
 		    BufferManager.getInstance().FreePage(tabInfo.getHeaderPageId(), 1);
 	    
 	    
@@ -82,27 +95,21 @@ public class FileManager {
 
 	 // par courir tous la liste et vérifé l'espace Libre 
 	 PageId page = new PageId (a,b);
-	 System.out.println(page.toString());
 	 ByteBuffer buffparcour = BufferManager.getInstance().GetPage(page);
-	 System.out.println(buffparcour.capacity());
-	 
 	 // calcul espace libre
 	buffparcour.position(0);
-	int capacite = (int)DBParams.SGBDPageSize;
-	//System.out.println(capacite);
-	System.out.println(buffparcour.capacity());
-	buffparcour.position(capacite-4);
-	int posDebEspaceLibre =  buffparcour.getInt();
-	
-	System.out.println(posDebEspaceLibre);
-	//position debut espace disponible 
-	int espacelibretableau = capacite-posDebEspaceLibre;
-	System.out.println(espacelibretableau);
-	int nbslotdir = buffparcour.getInt((int)DBParams.SGBDPageSize -8);
-	int tailletableauslot = nbslotdir *2;
-	int tailleespacelibre = espacelibretableau-tailletableauslot;
+	int espacelibre = buffparcour.capacity()-4;//4096-4
+	buffparcour.position(espacelibre);
+	int posDebEspaceLibre = buffparcour.getInt(); 
+	System.out.println(posDebEspaceLibre+"posDeb");
+	int nombreslodir = buffparcour.capacity()-8;
+	int nombreRecord = buffparcour.getInt(nombreslodir);
+	System.out.println(nombreRecord+"nbr recor");
+	int tailleTableauslot = nombreRecord *2;
+	int tailleEspacelibre = posDebEspaceLibre-tailleTableauslot;
+	System.out.println(tailleEspacelibre+"espace libre taille");
 	BufferManager.getInstance().FreePage(page, 1);
-	if(tailleespacelibre >=sizeRecord) {
+	if(tailleEspacelibre >=sizeRecord) {
 		return page;
 	}else {
 		return null;
@@ -119,15 +126,13 @@ public class FileManager {
 	    record.WriteToBuffer(buff, pos);
 	    int m = buff.getInt((int)DBParams.SGBDPageSize-4);
 	    m++;
-	    buff.allocate(4);
 	    buff.putInt((int)DBParams.SGBDPageSize-4,m);
 	    if( buff.capacity() == (int)DBParams.SGBDPageSize) {
 	    	ByteBuffer buff2 = BufferManager.getInstance().GetPage(record.getTabInfoRecord().getHeaderPageId());
 	    	 if((buff2.getInt(8)==-1 )&&(buff2.getInt(12)==0)) {// correspond au cas la liste est vide
 	 	    	// ecrire dans la headerpage   le pageId de la page 
-	    		buff2.allocate(4);
 	 	    	buff2.putInt(8,pageid.getFileIdx());
-	 	    	buff2.allocate(4);
+	 	
 	 	    	buff2.putInt(12,pageid.getPageIdx());
 	 	    	BufferManager.getInstance().FreePage(record.getTabInfoRecord().getHeaderPageId(), 1);
 	 	    }else {
@@ -137,9 +142,7 @@ public class FileManager {
 	 	    	buff.putInt(12,b);
 	 	    	BufferManager.getInstance().FreePage(pageid, 1);
 	 		    //Metre à jour dans la headerpage  
-	 	    	buff2.allocate(4);
 	 		    buff2.putInt(8,pageid.getFileIdx());
-	 		    buff2.allocate(4);
 	 		    buff2.putInt(12,pageid.getPageIdx());
 	 		    BufferManager.getInstance().FreePage(record.getTabInfoRecord().getHeaderPageId(), 1);
 	    	}

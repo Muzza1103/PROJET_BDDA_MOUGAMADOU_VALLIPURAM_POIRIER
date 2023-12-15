@@ -11,6 +11,7 @@ public final class DiskManager {
 	private Stack<PageId> pilePageLibre ;
 	private Stack<PageId> pilePageOccupe ;
 	private static final int PAGEIDMAX = 999;
+	private int[] taille = new int[DBParams.DMFileCount];
 
 	private DiskManager() {
 		pilePageLibre = new Stack<PageId>();
@@ -27,31 +28,42 @@ public final class DiskManager {
 	
 	public PageId AllocPage() {
 		PageId pageAlloue = null;
-		if (pilePageLibre.empty()) {
-			for (int pageIdx = 0; pageIdx < PAGEIDMAX ;pageIdx ++){
-				for (int fileIdx = 0; fileIdx <DBParams.DMFileCount; fileIdx++){
-					PageId pageCree = new PageId(fileIdx, pageIdx);
-					if (!pilePageOccupe.contains(pageCree)){
-						pageAlloue = pageCree;
-						String fileName = "F"+pageAlloue.getFileIdx();
-						try{
-							File file = new File(DBParams.DBPath+fileName+".bin");
-							if (file.exists()) {
-								System.out.println("Ajout d'une page à " + fileName + ".bin");
-							} else {
-								if (file.createNewFile()) {
-									System.out.println("Création du fichier " + fileName + ".bin");
-								}
-							}
-						}catch (IOException e){
-							e.printStackTrace();
-						}
-						pilePageOccupe.add(pageAlloue);
-						return pageAlloue;
+		if (pilePageLibre.isEmpty()) {
+			try {
+				for (int i=0;i<DBParams.DMFileCount;i++) {
+					File file = new File(DBParams.DBPath+"F"+i+".bin");
+				if (file.exists()) {
+					taille[i]=(int)file.length();
 					}
 				}
+				int indiceMin = 0;
+				for (int i = 1; i < taille.length; i++) {
+					if (taille[i] < taille[indiceMin]) {
+						indiceMin = i; // Met à jour l'indice du minimum
+					}
+				}
+				File file = new File(DBParams.DBPath+"F"+indiceMin+".bin");
+				if (file.exists()) {
+					pageAlloue = new PageId(indiceMin, (int) (file.length() / DBParams.SGBDPageSize) );
+				
+					System.out.println("Ajout d'une page à F" +indiceMin + ".bin");
+				}else {
+					file.createNewFile();
+					pageAlloue = new PageId(indiceMin, (int) (file.length() / DBParams.SGBDPageSize) );
+				
+					System.out.println("Création du fichier " + indiceMin + ".bin");
+				}
+				RandomAccessFile raf = new RandomAccessFile(file, "rw");
+				raf.seek(raf.length());
+				byte[] pageContent = new byte[(int)DBParams.SGBDPageSize];
+				raf.write(pageContent);
+				raf.close();
+				pilePageOccupe.add(pageAlloue);
+				return pageAlloue;
+			}catch (IOException e){
+				e.printStackTrace();
 			}
-		}else {
+		}else{
 			pageAlloue = pilePageLibre.pop();
 			pilePageOccupe.add(pageAlloue);
 			System.out.println("La page libre "+pageAlloue.toString()+" a été alloué !");
@@ -112,6 +124,16 @@ public final class DiskManager {
 
 	public void DeallocPage (PageId pageId){
 		if (pilePageOccupe.contains(pageId)){
+			try {
+			File file = new File(DBParams.DBPath+"F"+pageId.getFileIdx()+".bin");
+				RandomAccessFile raf = new RandomAccessFile(file, "rw");
+				raf.seek(pageId.getPageIdx() * DBParams.SGBDPageSize);
+				byte[] pageContent = new byte[(int)DBParams.SGBDPageSize];
+				raf.write(pageContent);
+				raf.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 			pilePageLibre.add(pageId);
 			pilePageOccupe.remove(pageId);
 			System.out.println("La page "+pageId.toString()+" a été désalloué !");
@@ -127,5 +149,3 @@ public final class DiskManager {
 	}
 
 }
-
-

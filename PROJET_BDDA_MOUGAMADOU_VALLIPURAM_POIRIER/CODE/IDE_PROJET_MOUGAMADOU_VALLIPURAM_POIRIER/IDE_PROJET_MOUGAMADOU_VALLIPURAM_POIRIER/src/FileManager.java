@@ -99,8 +99,7 @@ public class FileManager {
 	 // calcul espace libre
 	buffparcour.position(0);
 	int espacelibre = buffparcour.capacity()-4;//4096-4
-	buffparcour.position(espacelibre);
-	int posDebEspaceLibre = buffparcour.getInt(); 
+	int posDebEspaceLibre = buffparcour.getInt(espacelibre);  
 	System.out.println(posDebEspaceLibre+"posDeb");
 	int nombreslodir = buffparcour.capacity()-8;
 	int nombreRecord = buffparcour.getInt(nombreslodir);

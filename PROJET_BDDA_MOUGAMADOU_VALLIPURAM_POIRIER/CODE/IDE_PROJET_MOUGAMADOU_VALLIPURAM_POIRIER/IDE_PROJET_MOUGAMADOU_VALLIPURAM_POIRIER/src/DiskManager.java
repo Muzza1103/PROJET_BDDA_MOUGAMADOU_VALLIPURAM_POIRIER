@@ -72,6 +72,7 @@ public final class DiskManager {
 		return pageAlloue; 
 	}
 	
+	
 	public void ReadPage (PageId pageId, ByteBuffer buff) {
 		if(pilePageOccupe.contains(pageId) || pilePageLibre.contains(pageId)){ //en considérant que les pages libres peuvent ne pas être vide
 			String fileName = "F"+pageId.getFileIdx()+".bin";
@@ -82,7 +83,7 @@ public final class DiskManager {
 				byte[] pageData = new byte[(int)DBParams.SGBDPageSize];
 				rf.read(pageData); //pageData prend les données de la lecture
             	buff.put(pageData); //on met les données de la lecture dans le buffer
-            	pageId.setOctetTaille((int)rf.length());
+            	//pageId.setOctetTaille((int)rf.length());
 				buff.flip();
 				rf.close();
 				pageId.incrNbreAcces();
@@ -102,16 +103,14 @@ public final class DiskManager {
             	//File file = new File(DBParams.DBPath+fileName);
 				RandomAccessFile rf = new RandomAccessFile(DBParams.DBPath+fileName, "rw");
 				rf.seek(pageId.getPageIdx() * DBParams.SGBDPageSize /*+ pageId.getOctetTaille()*/ );
-				if (buff.remaining() <= DBParams.SGBDPageSize) { // Pour être sur que la quantité de données que l'on va écrire est plus petite que la taille de la page 
-					buff.flip();
-					byte[] pageData = new byte[buff.remaining()]; //Permet d'initialiser pageData avec la même taille que les données de l'écriture
-					buff.get(pageData); // Copie les données du buffer dans pageData
-					rf.write(pageData); // Écrire le contenu de pageData dans le fichier
-					rf.close();
-					pageId.incrNbreAcces();
-				} else {
-					System.out.println("La quantité de données restantes est supérieure à la taille de la page.");
-				}
+				buff.position((int)DBParams.SGBDPageSize);
+				buff.flip();
+				byte[] pageData = new byte[buff.remaining()]; //Permet d'initialiser pageData avec la même taille que les données de l'écriture
+				buff.get(pageData); // Copie les données du buffer dans pageData
+				rf.write(pageData); // Écrire le contenu de pageData dans le fichier
+				rf.close();
+				pageId.incrNbreAcces();
+				
             		
 			} catch (Exception e) {
 				e.printStackTrace();

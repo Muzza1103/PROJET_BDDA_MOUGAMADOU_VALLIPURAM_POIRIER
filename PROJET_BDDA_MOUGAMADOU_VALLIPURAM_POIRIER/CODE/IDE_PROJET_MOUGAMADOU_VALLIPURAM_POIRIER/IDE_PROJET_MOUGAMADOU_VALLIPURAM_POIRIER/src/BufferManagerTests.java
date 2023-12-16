@@ -82,6 +82,83 @@ public class BufferManagerTests {
 		dk.DeallocPage(pageId);
 		
 	}
+
+	public static void TestEcritureEtLectureModif() { //teste la gestion des buffers pour avoir les bons textes écrit dans les bons buffers
+		DiskManager dk = DiskManager.getInstance();
+		BufferManager bm = BufferManager.getInstance();
+		
+		PageId pageId = dk.AllocPage();
+		PageId pageId2 = dk.AllocPage();
+		
+		if (pageId != null) {
+			System.out.println("Page allouée : " + pageId.toString());
+		} else {
+			System.out.println("Impossible d'allouer la page.");
+		
+		}
+		if (pageId2 != null) {
+			System.out.println("Page allouée : " + pageId2.toString());
+		} else {
+			System.out.println("Impossible d'allouer la page.");
+		
+		}
+		
+		ByteBuffer bb = bm.GetPage(pageId);
+		ByteBuffer bb2 = bm.GetPage(pageId2);
+		
+		System.out.println("1");
+		String sb1 = "ksi est le goat !";
+		String sb2 = "réel poto";
+		
+		byte[] sbBytes = sb1.getBytes();
+		byte[] sbBytes2 = sb2.getBytes();
+		
+		if (sbBytes.length <= DBParams.SGBDPageSize ){
+			bb.put(sb1.getBytes());
+		}
+		if (sbBytes2.length <= DBParams.SGBDPageSize ){
+			bb2.put(sb2.getBytes());
+		}
+		int a=pageId.getFileIdx();
+		int b=pageId.getPageIdx();
+		PageId test = new PageId(a,b);
+		bm.FreePage(test, 1);
+		bm.FreePage(pageId2, 1);
+		//dk.DeallocPage(pageId)
+		int ab=pageId.getFileIdx();
+		int bc=pageId.getPageIdx();
+		PageId test2 = new PageId(ab,bc);
+		ByteBuffer bb3 = bm.GetPage(test2);
+		ByteBuffer bb4 = bm.GetPage(pageId2);
+		
+
+		//dk.ReadPage(pageId, bb3); Deja fait dans GetPage
+		
+
+		//dk.ReadPage(pageId2, bb4); Deja fait dans GetPage
+		
+		bb3.rewind();
+		bb4.rewind();
+		
+		System.out.println("5");
+		byte[] donneeLecture = new byte[bb3.remaining()];
+		byte[] donneeLecture2 = new byte[bb4.remaining()];
+		
+		System.out.println("6");
+		bb3.get(donneeLecture);
+		bb4.get(donneeLecture2);
+		System.out.println("7");
+		
+		String lecture = new String(donneeLecture);
+		String lecture2 = new String(donneeLecture2);
+		
+		System.out.println("Lecture de la page : "+pageId.toString());
+		System.out.println(lecture);
+		System.out.println("Lecture de la page : "+pageId2.toString());
+		System.out.println(lecture2);
+		
+		
+	}
 	
 	public static void TestEcritureEtLecture2() { // Cas test où 4 pages sont crées tour à tour, vérifie que lorsque les pincount sont égaux et que les nombres d'accées sont égaux la page désalloué est la plus ancienne.
 		DiskManager dk = DiskManager.getInstance();

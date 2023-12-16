@@ -23,8 +23,8 @@ public class FileManagerTest {
   
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		DBParams.DBPath = "C:\\Users\\thibh\\OneDrive\\Bureau\\Projet_BDDA__MOUGAMADOU_VALLIPURAM_POIRIER\\DB\\";
-		DBParams.SGBDPageSize = 4096;
+	DBParams.DBPath = "C:\\Users\\thibh\\OneDrive\\Bureau\\Projet_BDDA__MOUGAMADOU_VALLIPURAM_POIRIER\\DB\\";
+	DBParams.SGBDPageSize = 4096;
         DBParams.DMFileCount = 4;
         DBParams.frameCount = 2;
         BufferManager bm = BufferManager.getInstance();
@@ -63,8 +63,8 @@ public class FileManagerTest {
 
         Record0.InsertValues(recValues);
 
-		RecordId ri = TestwriteRecordToDataPage(Record0,pageData);
-		PageId pagefree = TestgetFreeDataPageId(tab,60);
+	RecordId ri = TestwriteRecordToDataPage(Record0,pageData);
+	PageId pagefree = TestgetFreeDataPageId(tab,60);
        
         	
 	    

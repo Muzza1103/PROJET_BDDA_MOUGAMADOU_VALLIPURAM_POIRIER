@@ -90,12 +90,20 @@ public class InsertCommand {
 	public void execute() {
 		if(rec.getTabInfoRecord()!=null){
 			int taille = 0;
-			for (int i=0;i<rec.getRecValues().size();i++) {
-				taille+=(byte)rec.getRecValues().get(i);
+			for (int i=0;i<rec.extraireTypes(rec.getTabInfoRecord()).size();i++) {
+				if (rec.getTabInfoRecord().getColInfo(i).GetTypCol().equals("INT")||rec.getTabInfoRecord().getColInfo(i).GetTypCol().equals("FLOAT")){
+					taille +=4;
+				}else{
+					taille += rec.getTabInfoRecord().getColInfo(i).getSizeString();
+				}
 			}
 			PageId pageId = fm.getFreeDataPageId(rec.getTabInfoRecord(), taille);
+			if (pageId == null) {
+				fm.addDataPage(rec.getTabInfoRecord());
+				pageId = fm.getFreeDataPageId(rec.getTabInfoRecord(), taille);
+			}
 			fm.writeRecordToDataPage(rec, pageId);
-			//Compléter
+			//InsertRecordIntoTable(rec);
 		}
 	}
 		

@@ -30,7 +30,7 @@ public class CreateTableCommand {
 	private ArrayList<ColInfo> getColInfo(){
 		ArrayList <ColInfo> colInfo = new ArrayList<>();
 		for(int i = 0; i < nomCol.size(); i++) {
-			colInfo.add(new ColInfo(nomCol.get(i), typeCol.get(i).getType()));
+			colInfo.add(new ColInfo(nomCol.get(i), typeCol.get(i)));
 		}
 		return colInfo;
 	}

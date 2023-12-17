@@ -9,16 +9,12 @@ public class DataBaseInfoTest {
 	
 	public static void testEcritureLecture() {
 		DataBaseInfo dbi = DataBaseInfo.getInstance();
-		TableInfo ti =  new TableInfo("Donald", 3);
+		FileManager fm = FileManager.getInstance();
+		TableInfo ti =  new TableInfo("Donald", 3, fm.createNewHeaderPage());
 		
-		TypeColonne t1 = new TypeColonne("INT");
-		TypeColonne t2 = new TypeColonne("FLOAT");
-		TypeColonne t3 = new TypeColonne("STRING", 10);
-		//TypeColonne t4 = new TypeColonne("VARSTRING", 10);
-		
-		ColInfo c1 = new ColInfo("Riri", t1);
-		ColInfo c2 = new ColInfo("Fifi", t2);
-		ColInfo c3 = new ColInfo("Loulou", t3);
+		ColInfo c1 = new ColInfo("Riri", "INT");
+		ColInfo c2 = new ColInfo("Fifi", "FLOAT");
+		ColInfo c3 = new ColInfo("Loulou","STRING(10)");
 		
 		
 		ArrayList<ColInfo> liste = new ArrayList<>();

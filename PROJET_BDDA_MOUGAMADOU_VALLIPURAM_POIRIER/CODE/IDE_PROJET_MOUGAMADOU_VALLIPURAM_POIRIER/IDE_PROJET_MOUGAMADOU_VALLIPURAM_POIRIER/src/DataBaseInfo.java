@@ -106,8 +106,8 @@ public class DataBaseInfo implements Serializable {
         			if(!tab.getColInfoList().isEmpty()) {
         			for (int i = 0; i < tab.getColInfoList().size(); i++) {
         				sb.append(tab.getColInfo(i).GetNomCol());
-        				sb.append(" " + tab.getColInfo(i).GetTypCol().getType());
-        				sb.append(" " + tab.getColInfo(i).GetT() + " ");
+        				sb.append(" " + tab.getColInfo(i).GetTypCol());
+        				sb.append(" " + tab.getColInfo(i).getSizeString() + " ");
         			}
         			}
     	}

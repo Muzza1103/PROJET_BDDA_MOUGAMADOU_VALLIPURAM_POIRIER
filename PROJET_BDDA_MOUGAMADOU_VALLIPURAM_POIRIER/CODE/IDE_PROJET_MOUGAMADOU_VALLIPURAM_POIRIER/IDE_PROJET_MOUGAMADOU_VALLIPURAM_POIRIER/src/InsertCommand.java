@@ -27,7 +27,7 @@ public class InsertCommand {
 				if (dbi.getList().get(numTable).getNbColonnes() == mots3.length) {
 					for(int i = 0; i < mots3.length; i++) {
 						if (types.get(i)=="VARCHAR"||types.get(i)=="STRING") {
-							if (getType(mots3[i]).equals("STRING") && mots3[i].length()< dbi.getList().get(numTable).getColInfo(i).GetTypCol().getOctet()) {
+							if (getType(mots3[i]).equals("STRING") && mots3[i].length()< dbi.getList().get(numTable).getColInfo(i).getSizeString()) {
 								recvalues.add(mots3[i]);
 							}
 						}else if (types.get(i)=="INT") {

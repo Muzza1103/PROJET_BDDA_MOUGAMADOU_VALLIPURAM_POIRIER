@@ -55,7 +55,6 @@ public class Frame {
     }
     public void loadPage(PageId pageId) {
         this.page_chargee = pageId;
-        // va charger le contenu de la page depuis le disque dans le buffer de cette frame
     }
     public String toString() {
     	StringBuilder sb = new StringBuilder();

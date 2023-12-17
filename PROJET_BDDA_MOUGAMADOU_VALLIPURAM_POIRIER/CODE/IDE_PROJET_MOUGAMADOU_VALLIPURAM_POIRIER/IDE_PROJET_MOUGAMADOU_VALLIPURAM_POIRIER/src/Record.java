@@ -7,7 +7,7 @@ public class Record {
     private TableInfo tabInfo;
     private ArrayList<Object> recvalues;
     //CONSTANTE T
-    private static int T = 3;
+    //private static int T = 20;
 
     public Record(){
 
@@ -48,27 +48,27 @@ public class Record {
         types_contenus = extraireTypes(tabInfo);
 
         //Ecrire recvalues dans buffer si pas de varstring
-        if(!types_contenus.contains("VARSTRING(T)")){
+        if(!types_contenus.contains("VARSTRING")){
             
             //on utilise le modèle taille fixe
             for(int i=0; i<recvalues.size(); i++){
                 //on vérifie le type de la relation
                 //gestion pour STRING
-                if(tabInfo.getColInfo(i).GetTypCol().equals("STRING(T)")){
+                if(tabInfo.getColInfo(i).GetTypCol().contains("STRING") && !tabInfo.getColInfo(i).GetTypCol().contains("VAR")){
                     System.out.println("wr_STRING_taillefixe");
                     String valeur_string = (String) recvalues.get(i);
                     writeInBufferString(buffer, pos, valeur_string);
-                    pos += T;
+                    pos += tabInfo.getColInfo(i).getSizeString();
                 } 
 
                 //gestion pour float & int
                 else {                    
-                    if(tabInfo.getColInfo(i).GetTypCol() == "FLOAT"){
+                    if(tabInfo.getColInfo(i).GetTypCol().equals("FLOAT")){
                         float inter_float = (float) recvalues.get(i);
                         writeInBufferFloat(buffer, pos, inter_float);
                         pos++;
                     } 
-                    else if (tabInfo.getColInfo(i).GetTypCol() == "INT"){
+                    else if (tabInfo.getColInfo(i).GetTypCol().equals("INT")){
                         System.out.println("On passe par la nouvelle commande");
                         int inter_int = (int) recvalues.get(i);
                         writeInBufferInt(buffer, pos, inter_int);
@@ -103,16 +103,20 @@ public class Record {
             buffer.position(pos++);
             tabPositions[0] = position_valeur;
             for(int iteration=1; iteration<recvalues.size();iteration++){
-                if(tabInfo.getColInfo(iteration).GetTypCol()=="FLOAT"||tabInfo.getColInfo(iteration).GetTypCol()=="INT"){
+                //On cherche la taille du String ici pour le garder en mémoire
+                int T = tabInfo.getColInfo(iteration).getSizeString();
+
+                if(tabInfo.getColInfo(iteration).GetTypCol().equals("FLOAT")||tabInfo.getColInfo(iteration).GetTypCol().equals("INT")){
                     buffer.putInt(position_valeur++);
                     buffer.position(pos++);
                     tabPositions[iteration] = position_valeur;
                 }
-                else if(tabInfo.getColInfo(iteration).GetTypCol()=="STRING(T)"){
+                else if(tabInfo.getColInfo(iteration).GetTypCol().contains("STRING") && !tabInfo.getColInfo(iteration).GetTypCol().contains("VAR")){
                     buffer.putInt(position_valeur+T);
                     buffer.position(pos+T);
                     tabPositions[iteration] = position_valeur;
-                } else if(tabInfo.getColInfo(iteration).GetTypCol()=="VARSTRING(T)"){
+
+                } else if(tabInfo.getColInfo(iteration).GetTypCol().contains("VARSTRING")){
                     String elementAInserer = (String) recvalues.get(iteration);
                     buffer.putInt(position_valeur+elementAInserer.length());
                     buffer.position(pos+elementAInserer.length());
@@ -120,11 +124,11 @@ public class Record {
                 }
             }
             //gestion du dernier element
-            if(tabInfo.getColInfo(recvalues.size()-1).GetTypCol()=="FLOAT" || tabInfo.getColInfo(recvalues.size()-1).GetTypCol()=="INT"){
+            if(tabInfo.getColInfo(recvalues.size()-1).GetTypCol().equals("FLOAT") || tabInfo.getColInfo(recvalues.size()-1).GetTypCol().equals("INT")){
                 buffer.putInt(position_valeur++);
-            } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol()=="STRING(T)"){
-                buffer.putInt(position_valeur+T);
-            } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol()=="VARSTRING(T)"){
+            } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("STRING") && !tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("VAR")){
+                buffer.putInt(position_valeur+tabInfo.getColInfo(recvalues.size()-1).getSizeString());
+            } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("VARSTRING")){
                 String elementAInserer = (String) recvalues.get(recvalues.size()-1);
                 buffer.putInt(position_valeur+elementAInserer.length());
             }
@@ -140,28 +144,28 @@ public class Record {
 
 
 
-                if(tabInfo.getColInfo(k).GetTypCol()=="FLOAT"){
+                if(tabInfo.getColInfo(k).GetTypCol().equals("FLOAT")){
                     System.out.println("writebuffer_FLOAT_taillevar");
                     float inter_float_variable = (float) recvalues.get(k);
                     positionInsertion = tabPositions[k];
                     writeInBufferFloat(buffer, positionInsertion, inter_float_variable);
                 }
 
-                else if(tabInfo.getColInfo(k).GetTypCol()=="INT"){
+                else if(tabInfo.getColInfo(k).GetTypCol().equals("INT")){
                     System.out.println("PASSAGE PAR INT//TAILLE VARIABLE");
                     int inter_int_variable = (int) recvalues.get(k);
                     positionInsertion = tabPositions[k];
                     writeInBufferInt(buffer, positionInsertion, inter_int_variable);
                 }
 
-                else if(tabInfo.getColInfo(k).GetTypCol()=="STRING(T)"){
+                else if(tabInfo.getColInfo(k).GetTypCol().contains("STRING") && !tabInfo.getColInfo(k).GetTypCol().contains("VAR")){
                     System.out.println("wr_STRING_taillevar");
                     String valeur_string = (String) recvalues.get(k);
                     positionInsertion = tabPositions[k];
                     writeInBufferString(buffer, positionInsertion, valeur_string);
                 }
 
-                else if(tabInfo.getColInfo(k).GetTypCol() == "VARSTRING(T)"){
+                else if(tabInfo.getColInfo(k).GetTypCol().contains("VARSTRING")){
                     System.out.println("writebuffer_VARSTRING_taillevariable");
                     String valeur_varstring = (String) recvalues.get(k);
                     positionInsertion = tabPositions[k];
@@ -238,6 +242,9 @@ public class Record {
         //si oui, taille variable
         if(types_content.contains("VARSTRING(T)")){
             for(int ite = 0; ite<tabInfo.getColInfoList().size(); ite++){
+                //on donne à la valeur T la taille du string
+                int T = tabInfo.getColInfo(ite).getSizeString();
+
                 if(tabInfo.getColInfo(ite).GetTypCol().contains("STRING(T)")){
                     //on récupère la valeur indiquée à la position pos
                     bufferposz = buff.get(bufferposmove);
@@ -279,6 +286,9 @@ public class Record {
         else {
             
             for(int m = 0; m<tabInfo.getColInfoList().size(); m++){
+                //T = taillestring
+                int T = tabInfo.getColInfo(m).getSizeString();
+
                 if(tabInfo.getColInfo(m).GetTypCol().contains("STRING(T)")){
                     readStringFromBuffer(buff, bufferposmove, T);
                     bufferposmove+=T;

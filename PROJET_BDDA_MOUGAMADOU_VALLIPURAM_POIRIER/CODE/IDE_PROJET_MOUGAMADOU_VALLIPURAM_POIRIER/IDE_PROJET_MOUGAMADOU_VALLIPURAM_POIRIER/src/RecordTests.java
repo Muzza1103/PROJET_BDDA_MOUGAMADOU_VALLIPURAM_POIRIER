@@ -4,10 +4,10 @@ import java.util.Arrays;
 
 public class RecordTests {
     public static void runRecordTests(){
-        ColInfo Colonne0 = new ColInfo("Nom", "VARSTRING(T)");
+        ColInfo Colonne0 = new ColInfo("Nom", "VARSTRING(20)");
         ColInfo Colonne1 = new ColInfo("Age", "INT");
         ColInfo Colonne2 = new ColInfo("Taille", "FLOAT");
-        ColInfo Colonne3 = new ColInfo("Genre", "STRING(T)");
+        ColInfo Colonne3 = new ColInfo("Genre", "STRING(20)");
 
         ArrayList<ColInfo> ListeColonnes = new ArrayList<>();
         ListeColonnes.add(Colonne0);
@@ -52,7 +52,7 @@ public class RecordTests {
     public static void testsTailleFixe(){
         ColInfo Colonne0 = new ColInfo("poids", "INT");
         ColInfo Colonne1 = new ColInfo("taille", "FLOAT");
-        ColInfo Colonne2 = new ColInfo("nationalite", "STRING(T)");
+        ColInfo Colonne2 = new ColInfo("nationalite", "STRING(3)");
 
         ArrayList<ColInfo> ListeColonne = new ArrayList<>();
         

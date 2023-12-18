@@ -42,6 +42,7 @@ public class FileManagerTest {
         ListeColonnes.add(Colonne3);
         PageId pageheader = TestcreatHeaderPage();
         TableInfo tab = new TableInfo("nom-age",4,pageheader);
+	tab.setColInfo(ListeColonnes);
         PageId pageData = TestaddDataPage(tab);
         PageId pageDatab = TestaddDataPage(tab);
         System.out.println(pageData.toString());

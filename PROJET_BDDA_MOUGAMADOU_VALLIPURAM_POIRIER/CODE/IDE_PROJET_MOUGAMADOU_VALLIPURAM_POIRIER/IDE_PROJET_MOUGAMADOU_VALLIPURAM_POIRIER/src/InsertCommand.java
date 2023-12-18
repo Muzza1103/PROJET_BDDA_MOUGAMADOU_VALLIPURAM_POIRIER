@@ -89,6 +89,7 @@ public class InsertCommand {
 	
 	public void execute() {
 		if(rec.getTabInfoRecord()!=null){
+			FileManager fm = FileManager.getInstance();
 			int taille = 0;
 			for (int i=0;i<rec.extraireTypes(rec.getTabInfoRecord()).size();i++) {
 				if (rec.getTabInfoRecord().getColInfo(i).GetTypCol().equals("INT")||rec.getTabInfoRecord().getColInfo(i).GetTypCol().equals("FLOAT")){

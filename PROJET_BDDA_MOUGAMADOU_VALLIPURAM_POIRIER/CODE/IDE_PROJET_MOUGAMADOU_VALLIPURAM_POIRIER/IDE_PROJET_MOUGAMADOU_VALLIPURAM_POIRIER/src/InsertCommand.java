@@ -1,5 +1,6 @@
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class InsertCommand {
@@ -18,17 +19,23 @@ public class InsertCommand {
 				numTable = dbi.getList().indexOf(ti);
 			}
 		}
-		Record rec = new Record(null);
 		try {
 			if (numTable != -1) {
 				rec = new Record(dbi.getList().get(numTable));
 				ArrayList<Object> recvalues = new ArrayList<>();
 				ArrayList<String> types = rec.extraireTypes(dbi.getList().get(numTable));
+				for(int i=0;i<types.size();i++) {
+					System.out.println(types.get(i));
+				}
+				System.out.println("0.1");
 				if (dbi.getList().get(numTable).getNbColonnes() == mots3.length) {
+					System.out.println("0.2");
 					for(int i = 0; i < mots3.length; i++) {
-						if (types.get(i)=="VARCHAR"||types.get(i)=="STRING") {
-							if (getType(mots3[i]).equals("STRING") && mots3[i].length()< dbi.getList().get(numTable).getColInfo(i).getSizeString()) {
+						if (types.get(i).contains("STRING")) {
+							if (getType(mots3[i]).contains("STRING") && mots3[i].length()< dbi.getList().get(numTable).getColInfo(i).getSizeString()) {
+								System.out.println("1");
 								recvalues.add(mots3[i]);
+								System.out.println("2");
 							}
 						}else if (types.get(i)=="INT") {
 							if (getType(mots3[i]).equals(types.get(i))) {
@@ -40,8 +47,13 @@ public class InsertCommand {
 							}
 						}
 					}
+					for(int i=0; i < recvalues.size();i++) {
+						System.out.println(recvalues.get(i).toString());
+					}
 					if(recvalues.size() == dbi.getList().get(numTable).getNbColonnes()) {
 						rec.InsertValues(recvalues);
+						this.rec = rec;
+					
 					}else {
 						throw new Exception("Les types des valeurs entrées ne correspondent pas à celle de la table !");// Nbr d'élements correcte mais les types ne correspondent pas
 					}
@@ -49,6 +61,7 @@ public class InsertCommand {
 					throw new Exception("Le nombre d'éléments rentré ne correspond pas au nombre d'élément de la table !");// Nbr d'éléments différent du nombre de colonne
 				}
 			}else {
+				Record rec = new Record(null);
 				throw new Exception("La table que vous avez entrée n'existe pas !"); // La tableInfo n'existe pas
 			}
 		}catch(Exception e){
@@ -90,7 +103,7 @@ public class InsertCommand {
 	public void execute() {
 		if(rec.getTabInfoRecord()!=null){
 			FileManager fm = FileManager.getInstance();
-			int taille = 0;
+			int taille = 0; //Modifier pour modifier la taille dans le cas ou il ya un VARSTRING et possiblement faire *2 pour la taille des char et des string
 			for (int i=0;i<rec.extraireTypes(rec.getTabInfoRecord()).size();i++) {
 				if (rec.getTabInfoRecord().getColInfo(i).GetTypCol().equals("INT")||rec.getTabInfoRecord().getColInfo(i).GetTypCol().equals("FLOAT")){
 					taille +=4;
@@ -103,10 +116,26 @@ public class InsertCommand {
 				fm.addDataPage(rec.getTabInfoRecord());
 				pageId = fm.getFreeDataPageId(rec.getTabInfoRecord(), taille);
 			}
+			/*
+			for(int i=0; i < rec.getRecValues().size();i++) {
+				System.out.println(rec.getRecValues().get(i).toString());
+			}*/
+			ByteBuffer buff = BufferManager.getInstance().GetPage(pageId);
+			printBuffer(buff);
+			BufferManager.getInstance().FreePage(pageId, 1);
 			fm.writeRecordToDataPage(rec, pageId);
+			ByteBuffer buff2 = BufferManager.getInstance().GetPage(pageId);
+			printBuffer(buff2);
+			BufferManager.getInstance().FreePage(pageId, 1);
 			//InsertRecordIntoTable(rec);
 		}
 	}
+	
+	public static void printBuffer(ByteBuffer buffer) {
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        System.out.println((String) Arrays.toString(bytes));
+    }
 		
 	
 }

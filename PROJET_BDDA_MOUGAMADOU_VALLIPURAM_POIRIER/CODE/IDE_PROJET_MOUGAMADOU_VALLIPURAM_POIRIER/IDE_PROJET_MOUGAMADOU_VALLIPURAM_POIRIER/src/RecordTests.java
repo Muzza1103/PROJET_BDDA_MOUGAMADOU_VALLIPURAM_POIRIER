@@ -52,7 +52,7 @@ public class RecordTests {
     public static void testsTailleFixe(){
         ColInfo Colonne0 = new ColInfo("poids", "INT");
         ColInfo Colonne1 = new ColInfo("taille", "FLOAT");
-        ColInfo Colonne2 = new ColInfo("nationalite", "STRING(3)");
+        ColInfo Colonne2 = new ColInfo("nationalite", "STRING(7)");
 
         ArrayList<ColInfo> ListeColonne = new ArrayList<>();
         
@@ -67,7 +67,7 @@ public class RecordTests {
         ArrayList<Object> recValues = new ArrayList<>();
         int poids_0 = 70;
         float taille_0 = 2.07f;
-        String nat_0 = "ITA";
+        String nat_0 = "bonjour";
 
         
         recValues.add(poids_0);

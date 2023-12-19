@@ -25,6 +25,9 @@ public class FileManagerTest {
   public  static List<Record> TestgetRecordsInDataPage(TableInfo tabInfo,PageId pageId) {
 	  return FileManager.getInstance().getRecordsInDataPage(tabInfo, pageId);
   }
+  public  static  List<List<PageId>> TestgetDataPages(TableInfo tabInfo) {
+	  return FileManager.getInstance().getDataPage(tabInfo);
+  }
   
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -75,9 +78,19 @@ public class FileManagerTest {
 	  for(int i = 0;i<ar.size();i++) {
 		  System.out.println(ar.get(i).getRecValues());
 	  }
+	  List<List<Record>> lr = new ArrayList<>();
+	  for(int j = 0;j<lr.size();j++) {
+	         for(int  i=0;i<lr.get(0).size();i++) {
+			       lr.get(0).get(i).toString();
+		       }
+	        for(int  i=0;i<lr.get(1).size();i++) {
+		            lr.get(1).get(i).toString();
+	                  }
+	  }
+	}
+	  
        
         	
 	    
 
-}
 }

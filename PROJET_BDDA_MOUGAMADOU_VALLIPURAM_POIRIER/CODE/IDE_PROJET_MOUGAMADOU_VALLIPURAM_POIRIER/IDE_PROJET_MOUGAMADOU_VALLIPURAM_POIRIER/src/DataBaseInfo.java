@@ -19,7 +19,7 @@ public class DataBaseInfo implements Serializable {
         this.compteurRel = 0;
     }
     
-    private ArrayList<TableInfo> getList() {
+    public ArrayList<TableInfo> getList() {
     	return listInfos;
     }
     
@@ -37,7 +37,7 @@ public class DataBaseInfo implements Serializable {
     
     public void flushAll() {
     	this.setCompteur(0);
-    	this.setList(null);
+    	this.setList(new ArrayList<TableInfo>());
     }
     
 
@@ -50,16 +50,21 @@ public class DataBaseInfo implements Serializable {
 
     public void Init() {
     	String fileName = DBParams.DBPath +"DBInfo.save";
-    	
+    	File file = new File(fileName);
     	try {
-    		FileInputStream input = new FileInputStream(fileName);
+    		/*if(!file.exists()) {
+				file.createNewFile();
+    		}*/
+    		if(file.exists()) {
+    			FileInputStream input = new FileInputStream(file);
     		
-    		ObjectInputStream ois = new ObjectInputStream(input);
+    			ObjectInputStream ois = new ObjectInputStream(input);
     		
-    		DataBaseInfo dbi = (DataBaseInfo) ois.readObject();
-    		this.setList(dbi.getList());
-    		this.setCompteur(getCompteur());
-    		ois.close();
+    			DataBaseInfo dbi = (DataBaseInfo) ois.readObject();
+    			this.setList(dbi.getList());
+    			this.setCompteur(getCompteur());
+    			ois.close();
+    		}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,6 +81,7 @@ public class DataBaseInfo implements Serializable {
 
     public void Finish() {
     	String fileName = "DBInfo.save";
+    	
     	File file = new File(DBParams.DBPath + fileName);
     	try {
     		FileOutputStream fos = new FileOutputStream(file);
@@ -101,17 +107,17 @@ public class DataBaseInfo implements Serializable {
     	StringBuffer sb = new StringBuffer();
     	if(listInfos!=null) {
     	for(TableInfo tab : listInfos) {
-        			String s = tab.getNom();
-        			sb.append(s + " " + tab.getNbColonnes() + " ");
-        			if(!tab.getColInfoList().isEmpty()) {
-        			for (int i = 0; i < tab.getColInfoList().size(); i++) {
-        				sb.append(tab.getColInfo(i).GetNomCol());
-        				sb.append(" " + tab.getColInfo(i).GetTypCol());
-        				sb.append(" " + tab.getColInfo(i).getSizeString() + " ");
-        			}
-        			}
+        	String s = tab.getNom();
+       		sb.append(s + " " + tab.getNbColonnes() + " \n");
+       		if(!tab.getColInfoList().isEmpty()) {
+       		for (int i = 0; i < tab.getColInfoList().size(); i++) {
+      			sb.append("Nom " + tab.getColInfo(i).GetNomCol());
+        		sb.append(" Type " + tab.getColInfo(i).GetTypCol());
+        		sb.append(" Taille " + tab.getColInfo(i).getSizeString() + "\n");
+        		}
+        	}
     	}
-        			System.out.println(sb.toString());
+      		System.out.println(sb.toString());
     	}else {
     		sb.append(this.getCompteur());
     		System.out.println(sb.toString());

@@ -115,14 +115,9 @@ public class FileManager {
 	BufferManager.getInstance().FreePage(page, 1);
 	if(tailleEspacelibre >=sizeRecord) {
 		return page;
-	}else {
-		return null;
-	}
-	 
-	
-	
-	 
-	 
+		}else {
+			return null;
+		}	 
 	}
 	public RecordId writeRecordToDataPage(Record record ,PageId pageid) {
 		ByteBuffer buff = BufferManager.getInstance().GetPage(pageid);
@@ -363,14 +358,22 @@ public class FileManager {
 		  
 		  
 	  }
-	  
+	  /*
 	  public RecordId  InsertRecordIntoTable(Record record) {
+		  
 	  }
 	  public List<Record> GetAllRecord(TableInfo tabInfo){
 		  
+		  
 	  }
+	  */
 
+}
 
+	  
+	
+
+	
 }
 
 	  

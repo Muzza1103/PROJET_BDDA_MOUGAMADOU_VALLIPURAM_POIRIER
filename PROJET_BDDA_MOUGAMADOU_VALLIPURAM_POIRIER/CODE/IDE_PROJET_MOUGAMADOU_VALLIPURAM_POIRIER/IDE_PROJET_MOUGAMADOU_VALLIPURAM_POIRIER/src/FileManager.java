@@ -2,6 +2,7 @@ import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.List;
 public class FileManager {
 	private static FileManager fm =null;
 	
@@ -111,7 +112,6 @@ public class FileManager {
 	int tailleTableauslot = nombreRecord *2;
 	//calcul Final pour l'espace libre
 	int tailleEspacelibre = tailleFichier-(tailleTableauslot+8+posDebEspaceLibre);
-	System.out.println(tailleEspacelibre+"espace libre taille");
 	BufferManager.getInstance().FreePage(page, 1);
 	if(tailleEspacelibre >=sizeRecord) {
 		return page;
@@ -131,17 +131,21 @@ public class FileManager {
 		//position de fin donner ecrit
 		int espacelibre = buff.capacity()-4;//4096-4
 		int posDebEspaceLibre = buff.getInt(espacelibre);
+		//System.out.println(posDebEspaceLibre+"espacelibrepos");
 		//ecriture du buffer
-	    record.WriteToBuffer(buff, posDebEspaceLibre);
+		int tailleRecord = record.WriteToBuffer(buff, posDebEspaceLibre);
 	   //positon de pour nombre de record
 		int nombreslodir = buff.capacity()-8;//4096-8
 		int nombreRecord = buff.getInt(nombreslodir);
+		
 	    
 	   //on fait nombreRecord *2 pour ecrire la taille et le positionnement du record et on on se positonne
-		int posiRecordEcrireTaille = (nombreRecord * 2)-nombreslodir;
-		int tailleRecord = record.readFromBuffer(buff, posDebEspaceLibre);
-		posiRecordEcrireTaille = posiRecordEcrireTaille-tailleRecord;
-		buff.position(posiRecordEcrireTaille-4);
+		int posiRecordEcrireTaille = nombreslodir-(nombreRecord * 2*4);
+		posiRecordEcrireTaille = posiRecordEcrireTaille-4;
+		int posiRecordEcrirepos = posiRecordEcrireTaille-8;
+
+	
+		buff.position(posiRecordEcrirepos);
 		buff.putInt(posDebEspaceLibre);
 		buff.position(posiRecordEcrireTaille);
 		buff.putInt(tailleRecord);
@@ -189,8 +193,8 @@ public class FileManager {
 	    return id;
 	}
 	
-	/***
-	 * public ArrayList<Record> getRecordsInDataPage(TableInfo tabInfo,PageId pageId) {
+	
+	  public List<Record> getRecordsInDataPage(TableInfo tabInfo,PageId pageId) {
 	 
 		// trouver la page parmis dans les deux les liste chaine
 		ByteBuffer buff = BufferManager.getInstance().GetPage(tabInfo.getHeaderPageId());
@@ -198,12 +202,101 @@ public class FileManager {
 			System.out.println("La liste de records sera vide car la page coorrspond à la headerpage");
 			return null;
 		}
+		List<Record> listRec = new ArrayList<>(); 
 		buff.position(0);
 		if(buff.get(0)==pageId.getFileIdx() && buff.get(4)==pageId.getPageIdx()) {
-			//PageId dans la 
+			//PageId dans la liste restant de la place pour
+			// faire une recherche dans la liste restant de la place
+			int a = buff.get(0);
+			int b = buff.get(4);
+			PageId pageData = new PageId(a,b);
+			pageData.toString();
+			System.out.println("pageData "+a+"a:"+b+"b : ");
+			ByteBuffer buff2 = BufferManager.getInstance().GetPage(pageData);
+			while(buff2.getInt(0)==-1 &&buff2.getInt(4)==0) {
+				PageId pagedat = new PageId(buff2.getInt(0),buff2.getInt(4));
+				pagedat.toString();
+				System.out.println("pageData "+buff2.getInt(0)+"a:"+buff2.getInt(4)+"b : ");
+				buff2 = BufferManager.getInstance().GetPage(pagedat);
+				// recuper les records 
+				buff2.position(0);
+				int nombreslodir = buff2.capacity()-8;//4096-8
+				int nombreRecord = buff2.getInt(nombreslodir);
+				if(nombreRecord ==0) {
+					// Pas de record dans la page 
+					return null;
+				}
+				for(int i = 0 ;i<nombreRecord;i++) {
+					int intilisationPositionRecord = nombreslodir -(8*(i+1));
+					int positonRecord =buff2.getInt(intilisationPositionRecord);
+					Record rec = new Record(tabInfo);
+					int taille = rec.readFromBuffer(buff2, positonRecord);
+			        System.out.println(taille+" : taille record");		
+					listRec.add(rec);
+				}    
+				BufferManager.getInstance().FreePage(pagedat, 1);
+			}
+			BufferManager.getInstance().FreePage(pageData, 1);
+			//recuper la pageI suivante 
+		}else {
+			if(buff.get(8)==pageId.getFileIdx() && buff.get(12)==pageId.getPageIdx()){
+				//PageID  dans la liste plein 
+				// faire une recherche dans la liste restant de la place
+				int a = buff.get(8);
+				int b = buff.get(12);
+				PageId pageData = new PageId(a,b);
+				ByteBuffer buff2 = BufferManager.getInstance().GetPage(pageData);
+				while(buff2.getInt(8)==-1 &&buff2.getInt(12)==0) {
+					PageId pagedat = new PageId(buff2.getInt(8),buff2.getInt(12));
+					buff2 = BufferManager.getInstance().GetPage(pagedat);
+					// recuper les records 
+					buff2.position(0);
+					int nombreslodir = buff2.capacity()-8;//4096-8
+					int nombreRecord = buff2.getInt(nombreslodir);
+					int espacelibre = buff2.capacity()-4;//4096-4
+					int posDebEspaceLibre = buff2.getInt(espacelibre);
+					if(nombreRecord ==0) {
+						// Pas de record dans la page 
+						return null;
+					}
+					for(int i = 0 ;i<nombreRecord;i++) {
+						int intilisationPositionRecord = nombreslodir -(8*(i+1));
+						int positonRecord =buff2.getInt(intilisationPositionRecord);
+						Record rec = new Record(tabInfo);
+						rec.readFromBuffer(buff2, positonRecord);
+						listRec.add(rec);
+					}    
+					BufferManager.getInstance().FreePage(pagedat, 1);
+				}
+				BufferManager.getInstance().FreePage(pageData, 1);
+			}
 		}
-		**/
-	//}
+		
+			return listRec;
+			
+		
+		}
+	  public List<List<PageId>> getDataPage(TableInfo tabInfo){
+		  List<List<PageId>> listPageid = new ArrayList<>();
+		  ByteBuffer buf = BufferManager.getInstance().GetPage(tabInfo.getHeaderPageId());
+		  List<PageId> listA = new ArrayList<>();
+		  List<PageId> listB = new ArrayList<>();
+		  if(buf.getInt(0)==-1 && buf.getInt(4)==0) {
+			  // on regarde que l'autre list
+			 listPageid.add(listA);
+			 listB.add(new PageId(buf.getInt(0),buf.getInt(4)));
+			 
+		  }
+		  
+		  
+		  
+	  }
+	
+	
+	  }
+	  
+	
 
-	}
+	
+	  
 	

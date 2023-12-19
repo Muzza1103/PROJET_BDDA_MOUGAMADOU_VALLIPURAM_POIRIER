@@ -205,13 +205,34 @@ public class FileManager {
 		List<Record> listRec = new ArrayList<>(); 
 		buff.position(0);
 		if(buff.get(0)==pageId.getFileIdx() && buff.get(4)==pageId.getPageIdx()) {
-			//PageId dans la liste restant de la place pour
-			// faire une recherche dans la liste restant de la place
-			int a = buff.get(0);
-			int b = buff.get(4);
+			//PageId est égale à la pageId
+			//on rentre dans le buffer de la page 
+			ByteBuffer bufPage = BufferManager.getInstance().GetPage(pageId);
+			// recuper les records 
+			bufPage.position(0);
+			int nombreslodir = bufPage.capacity()-8;//4096-8
+			int nombreRecord = bufPage.getInt(nombreslodir);
+			if(nombreRecord ==0) {
+				// Pas de record dans la page 
+				return null;
+			}
+			for(int i = 0 ;i<nombreRecord;i++) {
+				int intilisationPositionRecord = nombreslodir -(8*(i+1));
+				int positonRecord =bufPage.getInt(intilisationPositionRecord);
+				Record rec = new Record(tabInfo);
+				int taille = rec.readFromBuffer(bufPage, positonRecord);
+		        System.out.println(taille+" : taille record");		
+				listRec.add(rec);
+			}    
+			BufferManager.getInstance().FreePage(pageId, 1);
+		}else {
+				
+             // cas n'est pas dans la header page de liste restant de la place des recorrds 			
+			
+	
+			int a = buff.getInt(0);
+			int b = buff.getInt(4);
 			PageId pageData = new PageId(a,b);
-			pageData.toString();
-			System.out.println("pageData "+a+"a:"+b+"b : ");
 			ByteBuffer buff2 = BufferManager.getInstance().GetPage(pageData);
 			while(buff2.getInt(0)==-1 &&buff2.getInt(4)==0) {
 				PageId pagedat = new PageId(buff2.getInt(0),buff2.getInt(4));
@@ -238,23 +259,43 @@ public class FileManager {
 			}
 			BufferManager.getInstance().FreePage(pageData, 1);
 			//recuper la pageI suivante 
-		}else {
 			if(buff.get(8)==pageId.getFileIdx() && buff.get(12)==pageId.getPageIdx()){
-				//PageID  dans la liste plein 
-				// faire une recherche dans la liste restant de la place
-				int a = buff.get(8);
-				int b = buff.get(12);
-				PageId pageData = new PageId(a,b);
-				ByteBuffer buff2 = BufferManager.getInstance().GetPage(pageData);
-				while(buff2.getInt(8)==-1 &&buff2.getInt(12)==0) {
+				//PageID  dans la liste plein  
+				
+				ByteBuffer bufPage = BufferManager.getInstance().GetPage(pageId);
+				// recuper les records 
+				bufPage.position(0);
+				int nombreslodir = bufPage.capacity()-8;//4096-8
+				int nombreRecord = bufPage.getInt(nombreslodir);
+				if(nombreRecord ==0) {
+					// Pas de record dans la page 
+					return null;
+				}
+				for(int i = 0 ;i<nombreRecord;i++) {
+					int intilisationPositionRecord = nombreslodir -(8*(i+1));
+					int positonRecord =bufPage.getInt(intilisationPositionRecord);
+					Record rec = new Record(tabInfo);
+					int taille = rec.readFromBuffer(bufPage, positonRecord);
+			        System.out.println(taille+" : taille record");		
+					listRec.add(rec);
+				}    
+				BufferManager.getInstance().FreePage(pageId, 1);
+				
+			}else {
+				
+				
+				int c = buff.getInt(8);
+				int d = buff.getInt(12);
+			    PageId pageData2 = new PageId(c,d);
+				ByteBuffer buff3 = BufferManager.getInstance().GetPage(pageData2);
+				while(buff3.getInt(8)==-1 &&buff3.getInt(12)==0) {
 					PageId pagedat = new PageId(buff2.getInt(8),buff2.getInt(12));
-					buff2 = BufferManager.getInstance().GetPage(pagedat);
+					buff3 = BufferManager.getInstance().GetPage(pagedat);
 					// recuper les records 
-					buff2.position(0);
-					int nombreslodir = buff2.capacity()-8;//4096-8
-					int nombreRecord = buff2.getInt(nombreslodir);
-					int espacelibre = buff2.capacity()-4;//4096-4
-					int posDebEspaceLibre = buff2.getInt(espacelibre);
+					buff3.position(0);
+					int nombreslodir = buff3.capacity()-8;//4096-8
+					int nombreRecord = buff3.getInt(nombreslodir);
+		
 					if(nombreRecord ==0) {
 						// Pas de record dans la page 
 						return null;
@@ -268,7 +309,7 @@ public class FileManager {
 					}    
 					BufferManager.getInstance().FreePage(pagedat, 1);
 				}
-				BufferManager.getInstance().FreePage(pageData, 1);
+				BufferManager.getInstance().FreePage(pageData2, 1);
 			}
 		}
 		
@@ -281,19 +322,57 @@ public class FileManager {
 		  ByteBuffer buf = BufferManager.getInstance().GetPage(tabInfo.getHeaderPageId());
 		  List<PageId> listA = new ArrayList<>();
 		  List<PageId> listB = new ArrayList<>();
+		  if(buf.getInt(0)==-1 && buf.getInt(4)==0 && buf.getInt(8)==-1 && buf.getInt(12)==0) {
+			  // liste vide ayant aucun pageId 
+			  listPageid.add(listA);
+			  listPageid.add(listB);
+			  return listPageid;
+		  }
 		  if(buf.getInt(0)==-1 && buf.getInt(4)==0) {
 			  // on regarde que l'autre list
 			 listPageid.add(listA);
-			 listB.add(new PageId(buf.getInt(0),buf.getInt(4)));
+			 PageId p = new PageId(buf.getInt(8),buf.getInt(12));
+			 listB.add(p);
+			 ByteBuffer buff2 = BufferManager.getInstance().GetPage(p);
+			 while(buff2.getInt(8)==-1 && buff2.getInt(12)==0) {
+					PageId pagedat = new PageId(buff2.getInt(8),buff2.getInt(12));
+					buff2 = BufferManager.getInstance().GetPage(pagedat);
+					// recuper les pageId
+					listB.add(pagedat);
+					BufferManager.getInstance().FreePage(pagedat, 1);
+			 }
 			 
 		  }
+		  if(buf.getInt(8)==-1 && buf.getInt(12)==0) {
+			  // on regarde que l'autre list
+			 listPageid.add(listB);
+			 PageId p = new PageId(buf.getInt(0),buf.getInt(4));
+			 listA.add(p);
+			 ByteBuffer buff2 = BufferManager.getInstance().GetPage(p);
+			 while(buff2.getInt(0)==-1 && buff2.getInt(4)==0) {
+					PageId pagedat = new PageId(buff2.getInt(0),buff2.getInt(4));
+					buff2 = BufferManager.getInstance().GetPage(pagedat);
+					// recuper les pageId
+					listA.add(pagedat);
+					BufferManager.getInstance().FreePage(pagedat, 1);
+			 }
+		  }
+		  
+		  return listPageid;
 		  
 		  
 		  
 	  }
-	
-	
+	  
+	  public RecordId  InsertRecordIntoTable(Record record) {
 	  }
+	  public List<Record> GetAllRecord(TableInfo tabInfo){
+		  
+	  }
+
+
+}
+
 	  
 	
 

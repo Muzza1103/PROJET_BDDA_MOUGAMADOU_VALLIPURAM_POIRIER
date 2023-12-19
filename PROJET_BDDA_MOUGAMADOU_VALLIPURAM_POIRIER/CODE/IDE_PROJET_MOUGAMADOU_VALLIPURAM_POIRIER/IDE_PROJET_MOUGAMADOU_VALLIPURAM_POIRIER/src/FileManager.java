@@ -115,9 +115,14 @@ public class FileManager {
 	BufferManager.getInstance().FreePage(page, 1);
 	if(tailleEspacelibre >=sizeRecord) {
 		return page;
-		}else {
-			return null;
-		}	 
+	}else {
+		return null;
+	}
+	 
+	
+	
+	 
+	 
 	}
 	public RecordId writeRecordToDataPage(Record record ,PageId pageid) {
 		ByteBuffer buff = BufferManager.getInstance().GetPage(pageid);
@@ -336,7 +341,7 @@ public class FileManager {
 					listB.add(pagedat);
 					BufferManager.getInstance().FreePage(pagedat, 1);
 			 }
-			 
+			 return listPageid;
 		  }
 		  if(buf.getInt(8)==-1 && buf.getInt(12)==0) {
 			  // on regarde que l'autre list
@@ -351,6 +356,7 @@ public class FileManager {
 					listA.add(pagedat);
 					BufferManager.getInstance().FreePage(pagedat, 1);
 			 }
+			 return listPageid;
 		  }
 		  
 		  return listPageid;
@@ -358,22 +364,14 @@ public class FileManager {
 		  
 		  
 	  }
-	  /*
+	  
 	  public RecordId  InsertRecordIntoTable(Record record) {
-		  
 	  }
 	  public List<Record> GetAllRecord(TableInfo tabInfo){
 		  
-		  
 	  }
-	  */
 
-}
 
-	  
-	
-
-	
 }
 
 	  

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class FileManagerTest {
 
@@ -20,6 +21,10 @@ public class FileManagerTest {
   public  static RecordId TestwriteRecordToDataPage(Record record ,PageId pageid) {
 	  return FileManager.getInstance().writeRecordToDataPage(record, pageid);
   }
+
+  public  static List<Record> TestgetRecordsInDataPage(TableInfo tabInfo,PageId pageId) {
+	  return FileManager.getInstance().getRecordsInDataPage(tabInfo, pageId);
+  }
   
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -30,10 +35,10 @@ public class FileManagerTest {
         BufferManager bm = BufferManager.getInstance();
         DiskManager dk = DiskManager.getInstance();
         //System.out.println(page.toString());  
-        ColInfo Colonne0 = new ColInfo("Nom", "VARSTRING(T)");
+        ColInfo Colonne0 = new ColInfo("Nom", "VARSTRING(23)");
         ColInfo Colonne1 = new ColInfo("Age", "INT");
         ColInfo Colonne2 = new ColInfo("Taille", "FLOAT");
-        ColInfo Colonne3 = new ColInfo("Genre", "STRING(T)");
+        ColInfo Colonne3 = new ColInfo("Genre", "STRING(20)");
 
         ArrayList<ColInfo> ListeColonnes = new ArrayList<>();
         ListeColonnes.add(Colonne0);
@@ -42,7 +47,7 @@ public class FileManagerTest {
         ListeColonnes.add(Colonne3);
         PageId pageheader = TestcreatHeaderPage();
         TableInfo tab = new TableInfo("nom-age",4,pageheader);
-	tab.setColInfo(ListeColonnes);
+	    tab.setColInfo(ListeColonnes);
         PageId pageData = TestaddDataPage(tab);
         PageId pageDatab = TestaddDataPage(tab);
         System.out.println(pageData.toString());
@@ -60,12 +65,16 @@ public class FileManagerTest {
         recValues.add(age_0);
         recValues.add(taille_0);
         recValues.add(genre_0);
-        System.out.println(recValues);
+        //System.out.println(recValues);
 
         Record0.InsertValues(recValues);
 
-	RecordId ri = TestwriteRecordToDataPage(Record0,pageData);
-	PageId pagefree = TestgetFreeDataPageId(tab,60);
+	  RecordId ri = TestwriteRecordToDataPage(Record0,pageData);
+	  PageId pagefree = TestgetFreeDataPageId(tab,37);
+	  List<Record> ar =  TestgetRecordsInDataPage(tab,pageData);
+	  for(int i = 0;i<ar.size();i++) {
+		  System.out.println(ar.get(i).getRecValues());
+	  }
        
         	
 	    

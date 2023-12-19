@@ -34,18 +34,18 @@ public class RecordTests {
 
         Record0.InsertValues(recValues);
 
-        ByteBuffer nvbuffer = ByteBuffer.allocate(80);
+        ByteBuffer nvbuffer = ByteBuffer.allocate(200);
         
         Record0.WriteToBuffer(nvbuffer, 0);
 
-        System.out.println("hi");
-        System.out.println("affichage après écriture");
-        printBuffer(nvbuffer);
+        //System.out.println("hi");
+        //System.out.println("affichage après écriture");
+        //printBuffer(nvbuffer);
         //System.out.println(Arrays.toString(nvbuffer));
 
         Record0.readFromBuffer(nvbuffer, 0);
-        System.out.println("affichage après lecture du buffer");
-        printBuffer(nvbuffer);
+        //System.out.println("affichage après lecture du buffer");
+        //printBuffer(nvbuffer);
         System.out.println("fin tests");
     }
 

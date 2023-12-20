@@ -64,6 +64,8 @@ public class DataBaseInfo implements Serializable {
     			this.setList(dbi.getList());
     			this.setCompteur(getCompteur());
     			ois.close();
+    		}else {
+    			file.createNewFile();
     		}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

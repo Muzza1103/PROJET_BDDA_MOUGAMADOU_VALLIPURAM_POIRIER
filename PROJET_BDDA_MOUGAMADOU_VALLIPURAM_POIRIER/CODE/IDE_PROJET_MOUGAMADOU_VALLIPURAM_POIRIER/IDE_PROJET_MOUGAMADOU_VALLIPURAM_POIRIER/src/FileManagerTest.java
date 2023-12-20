@@ -31,17 +31,17 @@ public class FileManagerTest {
   
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-	DBParams.DBPath = "C:\\Users\\mmuzz\\OneDrive\\Bureau\\L3\\BDDA\\DB\\";
-	DBParams.SGBDPageSize = 4096;
-        DBParams.DMFileCount = 4;
+		DBParams.DBPath = "/users/licence/im27206/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/DB/";
+		DBParams.SGBDPageSize = 4096;
+        DBParams.DMFileCount = 4; 
         DBParams.frameCount = 2;
         BufferManager bm = BufferManager.getInstance();
         DiskManager dk = DiskManager.getInstance();
         //System.out.println(page.toString());  
-        ColInfo Colonne0 = new ColInfo("Nom", "FLOAT");
+        ColInfo Colonne0 = new ColInfo("Nom", "VARSTRING(20)");
         ColInfo Colonne1 = new ColInfo("Age", "INT");
         ColInfo Colonne2 = new ColInfo("Taille", "FLOAT");
-        ColInfo Colonne3 = new ColInfo("Genre", "INT");
+        ColInfo Colonne3 = new ColInfo("Genre", "STRING(20)");
 
         ArrayList<ColInfo> ListeColonnes = new ArrayList<>();
         ListeColonnes.add(Colonne0);
@@ -58,10 +58,10 @@ public class FileManagerTest {
         Record Record0 = new Record(tab);
         
         ArrayList<Object> recValues = new ArrayList<>();
-        float nom_0 = 122.13f;
+        String nom_0 = "voici_20_caract";
         int age_0 = 20;
         float taille_0 = 1.76f;
-        int genre_0 = 12;
+        String genre_0 = "voici_20_caractéres_";
 
         
         recValues.add(nom_0);
@@ -73,7 +73,7 @@ public class FileManagerTest {
         Record0.InsertValues(recValues);
 
 	  RecordId ri = TestwriteRecordToDataPage(Record0,pageData);
-	  PageId pagefree = TestgetFreeDataPageId(tab,37);
+	  PageId pagefree = TestgetFreeDataPageId(tab,60);
 	  List<Record> ar =  TestgetRecordsInDataPage(tab,pageData);
 	  for(int i = 0;i<ar.size();i++) {
 		  System.out.println(ar.get(i).getRecValues());

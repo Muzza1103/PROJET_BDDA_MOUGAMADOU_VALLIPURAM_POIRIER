@@ -46,12 +46,12 @@ public final class DiskManager {
 				if (file.exists()) {
 					pageAlloue = new PageId(indiceMin, (int) (file.length() / DBParams.SGBDPageSize) );
 				
-					System.out.println("Ajout d'une page à F" +indiceMin + ".bin");
+					//System.out.println("Ajout d'une page à F" +indiceMin + ".bin");
 				}else {
 					file.createNewFile();
 					pageAlloue = new PageId(indiceMin, (int) (file.length() / DBParams.SGBDPageSize) );
 				
-					System.out.println("Création du fichier " + indiceMin + ".bin");
+					//System.out.println("Création du fichier " + indiceMin + ".bin");
 				}
 				RandomAccessFile raf = new RandomAccessFile(file, "rw");
 				raf.seek(raf.length());
@@ -66,7 +66,7 @@ public final class DiskManager {
 		}else{
 			pageAlloue = pilePageLibre.pop();
 			pilePageOccupe.add(pageAlloue);
-			System.out.println("La page libre "+pageAlloue.toString()+" a été alloué !");
+			//System.out.println("La page libre "+pageAlloue.toString()+" a été alloué !");
 			return pageAlloue;
 		}
 		return pageAlloue; 
@@ -114,7 +114,7 @@ public final class DiskManager {
             		
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("Erreur lors de l'écriture de la page.");
+				//System.out.println("Erreur lors de l'écriture de la page.");
 			}
 		} else {
 			System.out.println("La page "+pageId.toString()+" n'existe pas !");

@@ -6,7 +6,7 @@ public class InsertCommand {
 	private Record rec;
 	
 	public InsertCommand(String [] mots) {
-
+		List<String> motColonnes = new ArrayList<>();
 		DataBaseInfo dbi = DataBaseInfo.getInstance();
 		String nomRelation = mots[2];
 		int numTable = -1;
@@ -22,11 +22,18 @@ public class InsertCommand {
 				rec = new Record(dbi.getList().get(numTable));
 				ArrayList<Object> recvalues = new ArrayList<>();
 				ArrayList<String> types = rec.extraireTypes(dbi.getList().get(numTable));
+				for(int i=0;i<types.size();i++) {
+					System.out.println(types.get(i));
+				}
+				//System.out.println("0.1");
 				if (dbi.getList().get(numTable).getNbColonnes() == mots3.length) {
+					//System.out.println("0.2");
 					for(int i = 0; i < mots3.length; i++) {
 						if (types.get(i).contains("STRING")) {
 							if (getType(mots3[i]).contains("STRING") && mots3[i].length()< dbi.getList().get(numTable).getColInfo(i).getSizeString()) {
+								//System.out.println("1");
 								recvalues.add(mots3[i]);
+								//System.out.println("2");
 							}
 						}else if (types.get(i).equals("INT")) {
 							if (getType(mots3[i]).equals(types.get(i))) {
@@ -37,6 +44,9 @@ public class InsertCommand {
 								recvalues.add(Float.parseFloat(mots3[i]));
 							}
 						}
+					}
+					for(int i=0; i < recvalues.size();i++) {
+						System.out.println("recvalues.get(" + i + ") = " + recvalues.get(i));
 					}
 					if(recvalues.size() == dbi.getList().get(numTable).getNbColonnes()) {
 						rec.InsertValues(recvalues);
@@ -95,30 +105,8 @@ public class InsertCommand {
 	public void execute() {
 		if(rec.getTabInfoRecord()!=null){
 			
-			FileManager fm = FileManager.getInstance();
-			int taille = 0; //Modifier pour modifier la taille dans le cas ou il ya un VARSTRING et possiblement faire *2 pour la taille des char et des string
-			for (int i=0;i<rec.extraireTypes(rec.getTabInfoRecord()).size();i++) {
-				if (rec.getTabInfoRecord().getColInfo(i).GetTypCol().equals("INT")||rec.getTabInfoRecord().getColInfo(i).GetTypCol().equals("FLOAT")){
-					taille +=4;
-				}else{
-					taille += rec.getTabInfoRecord().getColInfo(i).getSizeString();
-				}
-			}
-			if (rec.extraireTypes(rec.getTabInfoRecord()).contains("VARSTRING")) {
-				taille += rec.getRecValues().size()*4 ;
-			}
-			PageId pageId = fm.getFreeDataPageId(rec.getTabInfoRecord(), taille);
-			if (pageId == null) {
-				fm.addDataPage(rec.getTabInfoRecord());
-				pageId = fm.getFreeDataPageId(rec.getTabInfoRecord(), taille);
-			}
-			/*
-			for(int i=0; i < rec.getRecValues().size();i++) {
-				System.out.println(rec.getRecValues().get(i).toString());
-			}*/
-			fm.writeRecordToDataPage(rec, pageId);
-			
-			//InsertRecordIntoTable(rec);
+		FileManager fm = FileManager.getInstance();
+		fm.InsertRecordIntoTable(rec);
 		}
 	}
 	

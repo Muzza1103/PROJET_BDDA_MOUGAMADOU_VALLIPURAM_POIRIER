@@ -7,5 +7,12 @@ public class RecordId {
 		this.pageId=pageId;
 		this.slotIdx=slotIdx;
 	}
-
+	
+	public PageId getPageId() {
+		return pageId;
+	}
+	
+	public int slotIdx() {
+		return slotIdx;
+	}
 }

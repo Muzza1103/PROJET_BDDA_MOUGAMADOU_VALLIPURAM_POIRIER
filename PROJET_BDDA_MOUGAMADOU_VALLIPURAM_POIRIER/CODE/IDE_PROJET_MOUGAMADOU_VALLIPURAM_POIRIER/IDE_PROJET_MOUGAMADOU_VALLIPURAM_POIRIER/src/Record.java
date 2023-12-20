@@ -527,7 +527,7 @@ public class Record {
     	return recvalues;
     }
     
-    public int getTailleRecord() {
+    public int getTailleRecord() { // Pour les tests 
     	int taille=0;
     	for (int i=0;i<tabInfo.getColInfoList().size();i++) {
     		if(tabInfo.getColInfo(i).GetTypCol().equals("INT")||tabInfo.getColInfo(i).GetTypCol().equals("FLOAT")) {

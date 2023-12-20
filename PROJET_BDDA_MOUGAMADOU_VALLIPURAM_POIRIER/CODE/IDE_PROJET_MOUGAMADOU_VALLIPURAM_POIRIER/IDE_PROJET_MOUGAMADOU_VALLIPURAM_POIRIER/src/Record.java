@@ -204,6 +204,8 @@ public class Record {
             }
             */
           //gestion du dernier element
+            
+            
             if(tabInfo.getColInfo(recvalues.size()-1).GetTypCol().equals("FLOAT") || tabInfo.getColInfo(recvalues.size()-1).GetTypCol().equals("INT")){
                 buffer.putInt(position_valeur);
             } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("STRING") && !tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("VAR")){
@@ -275,8 +277,12 @@ public class Record {
     public void writeInBufferFloat(ByteBuffer buff, int pos, float aEcrire){
         System.out.println("écrit dans le buffer:"+ aEcrire);
         try{
+        	System.out.println("------------"+aEcrire);
             buff.position(pos);
             buff.putFloat(aEcrire);
+            buff.position(pos);
+            
+            System.out.println("------------"+buff.getFloat());
         } catch (Exception e){
             System.out.println("Le float "+aEcrire+" a causé une erreur");
             System.out.println(e);
@@ -321,7 +327,7 @@ public class Record {
         }
         
         //variables pour 
-        String intermediaire="";
+        String intermediaire;
         int bufferposmove=pos;
         int bufferposz;
         
@@ -347,11 +353,13 @@ public class Record {
                 	bufferposz = buff.get(bufferposmove);
                 	buff.position(bufferposz);
                 	byte[] string = new byte[T];
+                	buff.position(buff.capacity());
+                	buff.flip();
                 	buff.get(string);
                 	intermediaire = new String(string);
                 	recvalues.add(intermediaire);
                 	System.out.println("Valeur intérmédiaire:" +intermediaire);
-                	bufferposmove++;
+                	bufferposmove+=4;
                 	
                 	/*
                     bufferposz = buff.get(bufferposmove);
@@ -371,30 +379,29 @@ public class Record {
                     buff.position(bufferposz);
                     recvalues.add(buff.getInt());
                     
-                    bufferposmove++;
+                    bufferposmove+=4;
                 }
                 if(tabInfo.getColInfo(ite).GetTypCol().contains("FLOAT")){
                     bufferposz = buff.get(bufferposmove);
                     buff.position(bufferposz);
                     recvalues.add(buff.getFloat());
                     
-                    bufferposmove++;
+                    bufferposmove+=4;
                 }if(tabInfo.getColInfo(ite).GetTypCol().contains("VARSTRING")){
                 	int taille_du_varstring;
-                	bufferposz = buff.get(bufferposmove);
+                	bufferposz = buff.getInt(bufferposmove);
                 	buff.position(bufferposz);
-                	//if (ite<tabInfo.getColInfoList().size()-1) {
-                		taille_du_varstring = buff.getInt(bufferposmove+1)-bufferposz;
-                	//}else {
-                		taille_du_varstring = tabInfo.getColInfo(ite).getSizeString();
-                	//}
+                	taille_du_varstring = buff.getInt(bufferposmove+4)-bufferposz;
+                	
                 	byte[] string = new byte[taille_du_varstring];
+                	buff.position(buff.capacity());
+                	buff.flip();
                 	buff.position(bufferposz);
                 	buff.get(string);
                 	intermediaire = new String(string);
                 	recvalues.add(intermediaire);
                 	System.out.println("Valeur intérmédiaire:" +intermediaire);
-                	bufferposmove++;
+                	bufferposmove+=4;
                 	
                 	/*
                     bufferposz = buff.get(bufferposmove);
@@ -420,17 +427,17 @@ public class Record {
                 //T = taillestring
                 int T = tabInfo.getColInfo(m).getSizeString();
 
-                if(tabInfo.getColInfo(m).GetTypCol().contains("STRING(T)")){
+                if(tabInfo.getColInfo(m).GetTypCol().contains("STRING")){
                     readStringFromBuffer(buff, bufferposmove, T);
                     bufferposmove+=T;
                 }
                 else if(tabInfo.getColInfo(m).GetTypCol().contains("INT")){
                     readIntFromBuffer(buff, bufferposmove);
-                    bufferposmove++;
+                    bufferposmove+=4;
                 } 
                 else if(tabInfo.getColInfo(m).GetTypCol().contains("FLOAT")){
                     readFloatFromBuffer(buff, bufferposmove);
-                    bufferposmove++;
+                    bufferposmove+=4;
                 } /*else {
                     for(int ii=0;ii<T; ii++){
                         intermediaire += buff.get(bufferposmove);

@@ -1,6 +1,4 @@
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class InsertCommand {
@@ -27,28 +25,28 @@ public class InsertCommand {
 				for(int i=0;i<types.size();i++) {
 					System.out.println(types.get(i));
 				}
-				System.out.println("0.1");
+				//System.out.println("0.1");
 				if (dbi.getList().get(numTable).getNbColonnes() == mots3.length) {
-					System.out.println("0.2");
+					//System.out.println("0.2");
 					for(int i = 0; i < mots3.length; i++) {
 						if (types.get(i).contains("STRING")) {
 							if (getType(mots3[i]).contains("STRING") && mots3[i].length()< dbi.getList().get(numTable).getColInfo(i).getSizeString()) {
-								System.out.println("1");
+								//System.out.println("1");
 								recvalues.add(mots3[i]);
-								System.out.println("2");
+								//System.out.println("2");
 							}
-						}else if (types.get(i)=="INT") {
+						}else if (types.get(i).equals("INT")) {
 							if (getType(mots3[i]).equals(types.get(i))) {
 								recvalues.add(Integer.parseInt(mots3[i]));
 							}
-						}else if (types.get(i)=="FLOAT"){
-							if (getType(mots3[i]).equals(types.get(i))) {
+						}else if (types.get(i).equals("FLOAT")){
+							if (getTypeFloat(mots3[i]).equals(types.get(i))) {
 								recvalues.add(Float.parseFloat(mots3[i]));
 							}
 						}
 					}
 					for(int i=0; i < recvalues.size();i++) {
-						System.out.println(recvalues.get(i).toString());
+						System.out.println("recvalues.get(" + i + ") = " + recvalues.get(i));
 					}
 					if(recvalues.size() == dbi.getList().get(numTable).getNbColonnes()) {
 						rec.InsertValues(recvalues);
@@ -75,11 +73,15 @@ public class InsertCommand {
 		if (isInteger(mot)) {
 			return "INT";
 		}
+		return "STRING";
+		
+	}
+	
+	public String getTypeFloat(String mot) {
 		if (isFloat(mot)) {
 			return "FLOAT";
 		}
-		return "STRING";
-		
+		return null;
 	}
 	
 	private static boolean isInteger(String s) {
@@ -102,6 +104,7 @@ public class InsertCommand {
 	
 	public void execute() {
 		if(rec.getTabInfoRecord()!=null){
+			
 			FileManager fm = FileManager.getInstance();
 			int taille = 0; //Modifier pour modifier la taille dans le cas ou il ya un VARSTRING et possiblement faire *2 pour la taille des char et des string
 			for (int i=0;i<rec.extraireTypes(rec.getTabInfoRecord()).size();i++) {
@@ -123,7 +126,6 @@ public class InsertCommand {
 			for(int i=0; i < rec.getRecValues().size();i++) {
 				System.out.println(rec.getRecValues().get(i).toString());
 			}*/
-			
 			fm.writeRecordToDataPage(rec, pageId);
 			
 			//InsertRecordIntoTable(rec);

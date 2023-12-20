@@ -94,36 +94,38 @@ public class FileManager {
 		 return null;
 	 }
 	 
-
+	 while(a!=-1&&b!=0){
 	 // par courir tous la liste et vérifé l'espace Libre 
-	 PageId page = new PageId (a,b);
-	 ByteBuffer buffparcour = BufferManager.getInstance().GetPage(page);
+		 PageId page = new PageId (a,b);
+		 ByteBuffer buffparcour = BufferManager.getInstance().GetPage(page);
 	 // calcul espace libre
-	buffparcour.position(0);
-	int tailleFichier =  buffparcour.capacity(); //4096
+		 buffparcour.position(0);
+		 int tailleFichier =  buffparcour.capacity(); //4096
 	//position de fin donner ecrit
-	int espacelibre = buffparcour.capacity()-4;//4096-4
-	int posDebEspaceLibre = buffparcour.getInt(espacelibre);
+		 int espacelibre = buffparcour.capacity()-4;//4096-4
+		 int posDebEspaceLibre = buffparcour.getInt(espacelibre);
 	
    //positon de pour nombre de record
-	int nombreslodir = buffparcour.capacity()-8;//4096-8
-	int nombreRecord = buffparcour.getInt(nombreslodir);
+		 int nombreslodir = buffparcour.capacity()-8;//4096-8
+		 int nombreRecord = buffparcour.getInt(nombreslodir);
 	//calcul pour la taille du tableau
-	int tailleTableauslot = nombreRecord *2;
+		 int tailleTableauslot = nombreRecord *2*4;
 	//calcul Final pour l'espace libre
-	int tailleEspacelibre = tailleFichier-(tailleTableauslot+8+posDebEspaceLibre);
-	BufferManager.getInstance().FreePage(page, 1);
-	if(tailleEspacelibre >=sizeRecord) {
-		return page;
-	}else {
-		return null;
-	}
-	 
+		 int tailleEspacelibre = tailleFichier-(tailleTableauslot+8+posDebEspaceLibre);
+		 //BufferManager.getInstance().FreePage(page, 1);
+		 if(tailleEspacelibre >=sizeRecord) {
+			 BufferManager.getInstance().FreePage(page, 1);
+			 return page;
+		 }else {
+			 a = buffparcour.getInt(0);
+			 b = buffparcour.getInt(4);
+			 BufferManager.getInstance().FreePage(page, 1);
+		 }	
+	 }
+	 return null;
+}
 	
 	
-	 
-	 
-	}
 	public RecordId writeRecordToDataPage(Record record ,PageId pageid) {
 		ByteBuffer buff = BufferManager.getInstance().GetPage(pageid);
 		buff.position(0);
@@ -142,7 +144,7 @@ public class FileManager {
 	   //on fait nombreRecord *2 pour ecrire la taille et le positionnement du record et on on se positonne
 		int posiRecordEcrireTaille = nombreslodir-(nombreRecord * 2*4);
 		posiRecordEcrireTaille = posiRecordEcrireTaille-4;
-		int posiRecordEcrirepos = posiRecordEcrireTaille-8;
+		int posiRecordEcrirepos = posiRecordEcrireTaille-4; // -8 de base 
 
 	
 		buff.position(posiRecordEcrirepos);
@@ -158,38 +160,73 @@ public class FileManager {
 		buff.putInt(nombreRecord);
 		
 		
-		int nouvellePositonEspaceLibre = posDebEspaceLibre+tailleRecord;
+		int nouvellePositonEspaceLibre = posDebEspaceLibre+tailleRecord; //
 		buff.position(espacelibre);
 		buff.putInt(nouvellePositonEspaceLibre);
-		
+		posDebEspaceLibre = nouvellePositonEspaceLibre;
 		
 	    if( posDebEspaceLibre ==buff.capacity() ) {// signifie la page est pleine donc on rajoute dans la liste de fichier p
 	    	ByteBuffer buff2 = BufferManager.getInstance().GetPage(record.getTabInfoRecord().getHeaderPageId());
+	    
+	    	int a_buff = buff.getInt(0);
+	    	int b_buff = buff.getInt(4);
+	    	
 	    	 if((buff2.getInt(8)==-1 )&&(buff2.getInt(12)==0)) {// correspond au cas la liste plein qu i ' est vide
 	 	    	// ecrire dans la headerpage   le pageId de la page 
 	 	    	buff2.putInt(8,pageid.getFileIdx());
 	 	    	buff2.putInt(12,pageid.getPageIdx());
 	 	    	if(buff2.getInt(0)==pageid.getFileIdx()&&buff2.getInt(4)==pageid.getPageIdx()) {
-	 	    		buff.position(0);
+	 	    		//buff.position(0);
 	 	    		buff2.position(0);
-	 	    		buff.putInt(buff2.getInt(0));
-	 	    		buff.putInt(buff2.getInt(4));
+	 	    		//buff.putInt(buff2.getInt(0));
+	 	    		//buff.putInt(buff2.getInt(4));
+	 	    		buff2.putInt(buff.getInt(0));
+	 	    		buff2.putInt(buff.getInt(4));
+	 	    		buff.position(0);
+	 	    		buff.putInt(-1);
+	 	    		buff.putInt(0);
 	 	    	}
-	 	    	BufferManager.getInstance().FreePage(record.getTabInfoRecord().getHeaderPageId(), 1);
 	 	    }else {
 	 	    	int a =buff2.getInt(8);
 	 	    	int b =buff2.getInt(12);
-	 	    	buff.putInt(8,a);
-	 	    	buff.putInt(12,b);
-	 	    	BufferManager.getInstance().FreePage(pageid, 1);
+	 	    	//buff.putInt(8,a); 
+	 	    	//buff.putInt(12,b);
+	 	    	buff.putInt(0,a);
+	 	    	buff.putInt(4,b);
 	 		    //Metre à jour dans la headerpage  
 	 		    buff2.putInt(8,pageid.getFileIdx());
 	 		    buff2.putInt(12,pageid.getPageIdx());
-	 		    BufferManager.getInstance().FreePage(record.getTabInfoRecord().getHeaderPageId(), 1);
 	    	}
+	    	BufferManager.getInstance().FreePage(pageid, 1);
+	    	int a = buff2.getInt(0);
+	    	int b = buff2.getInt(4);
+	    	if(a==pageid.getFileIdx() && b==pageid.getPageIdx()) {
+	    		buff2.position(0);
+	    		buff2.putInt(a_buff);
+	    		buff2.putInt(b_buff);
+	    	}
+	    	BufferManager.getInstance().FreePage(record.getTabInfoRecord().getHeaderPageId(), 1);
+	    	while((a!=pageid.getFileIdx() && b!=pageid.getPageIdx())) {
+	    		PageId page = new PageId(a,b);
+	    		ByteBuffer buff3 = BufferManager.getInstance().GetPage(page);
+	    		a = buff3.getInt(0);
+	    		b = buff3.getInt(4);
+	    		if (a==pageid.getFileIdx() && b==pageid.getPageIdx()) {
+	    			buff3.position(0);
+		    		buff3.putInt(a_buff);
+		    		buff3.putInt(b_buff);
+	    		}
+	    		BufferManager.getInstance().FreePage(page, 1);
+	    		if (a==-1 && b==0) { //On force la sortie
+	    			a=pageid.getFileIdx();
+	    			b=pageid.getPageIdx();
+	    		}
+	    	}
+	    }else {
+	    	printBuffer(buff);
+	    	BufferManager.getInstance().FreePage(pageid, 1);
 	    }
-	    BufferManager.getInstance().FreePage(pageid, 1);
-	    RecordId id = new RecordId(pageid,posDebEspaceLibre);
+	    RecordId id = new RecordId(pageid,posiRecordEcrirepos);
 	    return id;
 	}
 	
@@ -204,7 +241,8 @@ public class FileManager {
 		}
 		List<Record> listRec = new ArrayList<>(); 
 		buff.position(0);
-		if(buff.get(0)==pageId.getFileIdx() && buff.get(4)==pageId.getPageIdx()) {
+		//Parcours la première page de la liste des pages non remplis et la liste des pages remplis de HeaderPage
+		if((buff.get(0)==pageId.getFileIdx() && buff.get(4)==pageId.getPageIdx()) || (buff.get(8)==pageId.getFileIdx() && buff.get(12)==pageId.getPageIdx())) {
 			//PageId est égale à la pageId
 			//on rentre dans le buffer de la page 
 			ByteBuffer bufPage = BufferManager.getInstance().GetPage(pageId);
@@ -225,11 +263,83 @@ public class FileManager {
 				listRec.add(rec);
 			}    
 			BufferManager.getInstance().FreePage(pageId, 1);
+			BufferManager.getInstance().FreePage(tabInfo.getHeaderPageId(), 1);
 		}else {
 				
              // cas n'est pas dans la header page de liste restant de la place des recorrds 			
 			
 	
+			int a = buff.getInt(0);
+			int b = buff.getInt(4);
+			while(a!=pageId.getFileIdx()&&b!=pageId.getPageIdx()) { //Parcourt les pages non complétes
+				PageId pageData = new PageId(a,b);
+				ByteBuffer buff2 = BufferManager.getInstance().GetPage(pageData);
+				a = buff2.getInt(0);
+				b = buff2.getInt(4);
+				BufferManager.getInstance().FreePage(pageData, 1);
+				if ((a==pageId.getFileIdx()&&b==pageId.getPageIdx())&&(a!=-1&&b!=0)) {
+					buff2 = BufferManager.getInstance().GetPage(pageId);
+					buff2.position(0);
+					int nombreslodir = buff2.capacity()-8;//4096-8
+					int nombreRecord = buff2.getInt(nombreslodir);
+					if(nombreRecord ==0) {
+						// Pas de record dans la page 
+						return null;
+					}
+					for(int i = 0 ;i<nombreRecord;i++) {
+						int intilisationPositionRecord = nombreslodir -(8*(i+1));
+						int positonRecord =buff2.getInt(intilisationPositionRecord);
+						Record rec = new Record(tabInfo);
+						int taille = rec.readFromBuffer(buff2, positonRecord);
+				        System.out.println(taille+" : taille record");		
+						listRec.add(rec);
+					}    
+					BufferManager.getInstance().FreePage(pageId, 1);
+				}
+				if (a==-1 && b==0) { //Force la sortie de la boucle
+					a=pageId.getFileIdx();
+					b=pageId.getPageIdx();
+				}
+			}
+			if(listRec.isEmpty()) {
+				int c = buff.getInt(8);
+				int d = buff.getInt(12);
+				while(c!=pageId.getFileIdx()&&d!=pageId.getPageIdx()) { //Parcourt les pages complétes
+					PageId pageData = new PageId(c,d);
+					ByteBuffer buff2 = BufferManager.getInstance().GetPage(pageData);
+					c = buff2.getInt(0);
+					d = buff2.getInt(4);
+					BufferManager.getInstance().FreePage(pageData, 1);
+					if ((c==pageId.getFileIdx()&&d==pageId.getPageIdx())&&(c!=-1&&d!=0)) {
+						buff2 = BufferManager.getInstance().GetPage(pageId);
+						buff2.position(0);
+						int nombreslodir = buff2.capacity()-8;//4096-8
+						int nombreRecord = buff2.getInt(nombreslodir);
+						if(nombreRecord ==0) {
+							// Pas de record dans la page 
+							return null;
+						}
+						for(int i = 0 ;i<nombreRecord;i++) {
+							int intilisationPositionRecord = nombreslodir -(8*(i+1));
+							int positonRecord =buff2.getInt(intilisationPositionRecord);
+							Record rec = new Record(tabInfo);
+							int taille = rec.readFromBuffer(buff2, positonRecord);
+					        System.out.println(taille+" : taille record");		
+							listRec.add(rec);
+						}    
+						BufferManager.getInstance().FreePage(pageId, 1);
+					}
+					if (c==-1 && d==0) { //Force la sortie de la boucle
+						c=pageId.getFileIdx();
+						d=pageId.getPageIdx();
+					}
+				}
+			}
+			BufferManager.getInstance().FreePage(tabInfo.getHeaderPageId(), 1);
+		}		
+		return listRec;
+	  }	
+	  /*
 			int a = buff.getInt(0);
 			int b = buff.getInt(4);
 			PageId pageData = new PageId(a,b);
@@ -238,6 +348,7 @@ public class FileManager {
 				PageId pagedat = new PageId(buff2.getInt(0),buff2.getInt(4));
 				pagedat.toString();
 				System.out.println("pageData "+buff2.getInt(0)+"a:"+buff2.getInt(4)+"b : ");
+				BufferManager.getInstance().FreePage(pageData, 1);
 				buff2 = BufferManager.getInstance().GetPage(pagedat);
 				// recuper les records 
 				buff2.position(0);
@@ -256,10 +367,10 @@ public class FileManager {
 					listRec.add(rec);
 				}    
 				BufferManager.getInstance().FreePage(pagedat, 1);
-			}
-			BufferManager.getInstance().FreePage(pageData, 1);
+			}*/
+			//BufferManager.getInstance().FreePage(pageData, 1);
 			//recuper la pageI suivante 
-			if(buff.get(8)==pageId.getFileIdx() && buff.get(12)==pageId.getPageIdx()){
+			/*if(buff.get(8)==pageId.getFileIdx() && buff.get(12)==pageId.getPageIdx()){
 				//PageID  dans la liste plein  
 				
 				ByteBuffer bufPage = BufferManager.getInstance().GetPage(pageId);
@@ -317,6 +428,9 @@ public class FileManager {
 			
 		
 		}
+		*/
+
+
 	  public List<List<PageId>> getDataPage(TableInfo tabInfo){
 		  List<List<PageId>> listPageid = new ArrayList<>();
 		  ByteBuffer buf = BufferManager.getInstance().GetPage(tabInfo.getHeaderPageId());
@@ -341,7 +455,7 @@ public class FileManager {
 					listB.add(pagedat);
 					BufferManager.getInstance().FreePage(pagedat, 1);
 			 }
-			 return listPageid;
+			 
 		  }
 		  if(buf.getInt(8)==-1 && buf.getInt(12)==0) {
 			  // on regarde que l'autre list
@@ -356,7 +470,6 @@ public class FileManager {
 					listA.add(pagedat);
 					BufferManager.getInstance().FreePage(pagedat, 1);
 			 }
-			 return listPageid;
 		  }
 		  
 		  return listPageid;
@@ -364,14 +477,29 @@ public class FileManager {
 		  
 		  
 	  }
-	  
+	  /*
 	  public RecordId  InsertRecordIntoTable(Record record) {
+		  
 	  }
 	  public List<Record> GetAllRecord(TableInfo tabInfo){
 		  
+		  
 	  }
+	  */
 
-
+	//récupéré sur www.java2s.com pour les tests
+	    public static void printBuffer(ByteBuffer buffer) {
+	    	buffer.position(0);
+	    	/*
+	        byte[] bytes = new byte[buffer.remaining()];
+	        buffer.get(bytes);
+	        System.out.println((String) Arrays.toString(bytes));
+	        */
+	    	while (buffer.hasRemaining()) {
+	            int element = buffer.getInt();
+	            System.out.print(element+" ");
+	        }
+	    }
 }
 
 	  

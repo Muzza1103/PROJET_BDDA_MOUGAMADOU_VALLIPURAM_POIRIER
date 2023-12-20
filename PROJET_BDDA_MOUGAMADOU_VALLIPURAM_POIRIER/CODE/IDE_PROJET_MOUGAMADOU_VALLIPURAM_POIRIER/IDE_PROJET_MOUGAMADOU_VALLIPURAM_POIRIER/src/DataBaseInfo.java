@@ -119,10 +119,10 @@ public class DataBaseInfo implements Serializable {
         		}
         	}
     	}
-      		System.out.println(sb.toString());
+      		//System.out.println(sb.toString());
     	}else {
     		sb.append(this.getCompteur());
-    		System.out.println(sb.toString());
+    		//System.out.println(sb.toString());
     	}
     }
 

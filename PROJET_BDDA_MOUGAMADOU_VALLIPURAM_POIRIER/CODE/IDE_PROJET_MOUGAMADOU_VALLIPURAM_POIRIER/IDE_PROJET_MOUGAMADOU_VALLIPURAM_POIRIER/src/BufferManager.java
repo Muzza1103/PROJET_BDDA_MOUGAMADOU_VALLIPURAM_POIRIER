@@ -37,7 +37,7 @@ public final class BufferManager {
     			//incrémentation de pinCount
     			f.getPageId().incrNbreAcces();
     			//incrémente le compteur d'accès à la page
-    			System.out.println("trouver page");
+    			//System.out.println("ligne 40 BufferManager : trouver page");
     			dk.ReadPage(ID_page, f.getByteBuffer());
     			return f.getByteBuffer();
     			//renvoie le contenu de la page
@@ -50,7 +50,7 @@ public final class BufferManager {
                     fr.incrPinCount();
                     fr.loadPage(ID_page);
                     fr.getPageId().incrNbreAcces();
-                    System.out.println("case vide");
+                   // System.out.println("ligne 53 BufferManager : case vide");
                     dk.ReadPage(ID_page, fr.getByteBuffer());
                     return fr.getByteBuffer();
                 }
@@ -114,7 +114,7 @@ public final class BufferManager {
     public void afficheFrame() {
     	for (Frame f : listFrames ) {
     		if(f.getPageId() != null) {
-    			System.out.println(f.toString());
+    			System.out.println("ligne 117 BufferManager : " + f.toString());
     		}
     	}
     }

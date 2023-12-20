@@ -21,7 +21,7 @@ public class ImportCommand{
 			String ligne;
 			while((ligne = bufferReader.readLine()) != null) {
 				String values = "(" + ligne + ")";
-				System.out.println(values);
+				//System.out.println(values);
 				dbm.ProcessCommand("INSERT INTO "+ nomRelation + " VALUES "+ values);
 			}
 		}

@@ -95,18 +95,19 @@ public class Record {
             //ByteBuffer nvbuff;
             //init le offset directory
             buffer.position(pos);       
-            buffer.put((byte)(recvalues.size()*4+4));
+            //buffer.put((byte)(recvalues.size()*4+4));
             
-            int pos_index = 1;
+            int pos_debut= pos;
             int pos_valeur = recvalues.size()*4+4;
 
             int positionLastValue = 0;
 
             int tabPositions[] = new int[recvalues.size()];
             int k;
-            int position_valeur = recvalues.size()+1;
+            int position_valeur = pos + recvalues.size()*4 ;
             
             //boucle pour insérer les valeurs de positions
+            /*
             buffer.position(pos);
             buffer.putInt(position_valeur);
             buffer.position(pos+=4);
@@ -128,26 +129,96 @@ public class Record {
                 } else if(tabInfo.getColInfo(iteration).GetTypCol().contains("VARSTRING")){
                     String elementAInserer = (String) recvalues.get(iteration);
                     buffer.putInt(position_valeur+=elementAInserer.length());
+                    System.out.println(elementAInserer.length());
                     buffer.position(pos+=4);
                     tabPositions[iteration] = position_valeur;
                 }
+            }*/
+            
+            buffer.position(pos);
+            //buffer.putInt(position_valeur);
+            //buffer.position(pos+=4);
+            //tabPositions[0] = position_valeur;
+            for(int iteration=0; iteration<recvalues.size();iteration++){
+                //On cherche la taille du String ici pour le garder en mémoire
+                int T = tabInfo.getColInfo(iteration).getSizeString();
+
+                if(tabInfo.getColInfo(iteration).GetTypCol().equals("FLOAT")||tabInfo.getColInfo(iteration).GetTypCol().equals("INT")){
+                    buffer.putInt(position_valeur);
+                    buffer.position(pos+=4);
+                    tabPositions[iteration] = position_valeur;
+                    position_valeur+=4;
+                }
+                else if(tabInfo.getColInfo(iteration).GetTypCol().contains("STRING") && !tabInfo.getColInfo(iteration).GetTypCol().contains("VAR")){
+                    buffer.putInt(position_valeur);
+                    buffer.position(pos+=4);
+                    System.out.println("kdfjslkfsfkjsdlfk");
+                    tabPositions[iteration] = position_valeur;
+                    position_valeur+=T;
+
+                } else if(tabInfo.getColInfo(iteration).GetTypCol().contains("VARSTRING")){
+                    String elementAInserer = (String) recvalues.get(iteration);
+                    buffer.putInt(position_valeur);
+                    buffer.position(pos+=4);
+                    tabPositions[iteration] = position_valeur;
+                    position_valeur+=elementAInserer.length();
+                }
             }
+            /*
+            buffer.position(pos);
+            buffer.putInt(position_valeur);
+            buffer.position(pos+=4);
+            tabPositions[0] = position_valeur;
+            for(int iteration=0; iteration<recvalues.size()-1;iteration++){
+                //On cherche la taille du String ici pour le garder en mémoire
+                int T = tabInfo.getColInfo(iteration).getSizeString();
+
+                if(tabInfo.getColInfo(iteration).GetTypCol().equals("FLOAT")||tabInfo.getColInfo(iteration).GetTypCol().equals("INT")){
+                    buffer.putInt(position_valeur+=4);
+                    buffer.position(pos+=4);
+                    tabPositions[iteration+1] = position_valeur;
+                }
+                else if(tabInfo.getColInfo(iteration).GetTypCol().contains("STRING") && !tabInfo.getColInfo(iteration).GetTypCol().contains("VAR")){
+                    buffer.putInt(position_valeur+=T);
+                    buffer.position(pos+=4);
+                    tabPositions[iteration+1] = position_valeur;
+
+                } else if(tabInfo.getColInfo(iteration).GetTypCol().contains("VARSTRING")){
+                    String elementAInserer = (String) recvalues.get(iteration);
+                    buffer.putInt(position_valeur+=elementAInserer.length());
+                    System.out.println(elementAInserer.length());
+                    buffer.position(pos+=4);
+                    tabPositions[iteration+1] = position_valeur;
+                }
+            }*/
+            
+            /*
             //gestion du dernier element
             if(tabInfo.getColInfo(recvalues.size()-1).GetTypCol().equals("FLOAT") || tabInfo.getColInfo(recvalues.size()-1).GetTypCol().equals("INT")){
                 buffer.putInt(position_valeur+=4);
             } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("STRING") && !tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("VAR")){
-                buffer.putInt(position_valeur+tabInfo.getColInfo(recvalues.size()-1).getSizeString()*4);
+                buffer.putInt(position_valeur+tabInfo.getColInfo(recvalues.size()-1).getSizeString());
             } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("VARSTRING")){
                 String elementAInserer = (String) recvalues.get(recvalues.size()-1);
-                buffer.putInt(position_valeur+elementAInserer.length()*4);
+                buffer.putInt(position_valeur+elementAInserer.length());
+            }
+            */
+          //gestion du dernier element
+            if(tabInfo.getColInfo(recvalues.size()-1).GetTypCol().equals("FLOAT") || tabInfo.getColInfo(recvalues.size()-1).GetTypCol().equals("INT")){
+                buffer.putInt(position_valeur);
+            } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("STRING") && !tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("VAR")){
+                buffer.putInt(position_valeur);
+            } else if (tabInfo.getColInfo(recvalues.size()-1).GetTypCol().contains("VARSTRING")){
+                //String elementAInserer = (String) recvalues.get(recvalues.size()-1);
+                buffer.putInt(position_valeur);
             }
 
             System.out.println(tabPositions.toString());
             
             for(k=0; k<recvalues.size(); k++){
                 System.out.println("envoi info");
-                buffer.position(pos_index);
-                buffer.put((byte)pos_valeur);
+                //buffer.position(pos_index);
+                //buffer.put((byte)pos_valeur);
 
                 int positionInsertion = 0;
 
@@ -183,9 +254,9 @@ public class Record {
 
             }
 
-            taille = pos_valeur;
+            taille = buffer.position()-pos_debut;
         }
-        printBuffer(buffer);
+        //printBuffer(buffer);
         return taille;
     }
 
@@ -216,13 +287,19 @@ public class Record {
     public void writeInBufferString(ByteBuffer buff, int pos, String aEcrire){
         System.out.println("écrit dans le buffer:"+aEcrire);
         try {
-            //buff.position(pos);
+            buff.position(pos);
+            byte[] tabByte = aEcrire.getBytes();
+            buff.put(tabByte);
+            
+            /*
             for(int wr_str_tfix = 0; wr_str_tfix<aEcrire.length(); wr_str_tfix++){
                 buff.position(pos);
                 buff.putChar(aEcrire.charAt(wr_str_tfix));
                 pos++;
                 //System.out.print("caractère écrit: "+aEcrire.charAt(wr_str_tfix)+" ");
-            }    
+            } 
+            
+            */   
         } catch (Exception e) {
             // TODO: handle exception
             System.out.println("Le string "+aEcrire+" a causé une erreur");
@@ -249,6 +326,9 @@ public class Record {
         int bufferposz;
         
         int taille=0;
+        if(recvalues==null) {
+        	recvalues = new ArrayList<Object>();
+        }
         //vider la liste de valeurs
         if(!recvalues.isEmpty()){
             recvalues.clear();
@@ -261,8 +341,19 @@ public class Record {
                 //on donne à la valeur T la taille du string
                 int T = tabInfo.getColInfo(ite).getSizeString();
 
-                if(tabInfo.getColInfo(ite).GetTypCol().contains("STRING(T)")){
+                if(tabInfo.getColInfo(ite).GetTypCol().contains("STRING") && !tabInfo.getColInfo(ite).GetTypCol().contains("VAR")){
                     //on récupère la valeur indiquée à la position pos
+                	
+                	bufferposz = buff.get(bufferposmove);
+                	buff.position(bufferposz);
+                	byte[] string = new byte[T];
+                	buff.get(string);
+                	intermediaire = new String(string);
+                	recvalues.add(intermediaire);
+                	System.out.println("Valeur intérmédiaire:" +intermediaire);
+                	bufferposmove++;
+                	
+                	/*
                     bufferposz = buff.get(bufferposmove);
                     for(int iteite = 0; iteite<T; iteite++){
                         intermediaire += buff.getChar(bufferposz);
@@ -272,17 +363,40 @@ public class Record {
                     recvalues.add(intermediaire);
                     intermediaire="";
                     bufferposmove++;
-                }
+               	*/
+               	}	
+                
                 if(tabInfo.getColInfo(ite).GetTypCol().contains("INT")){
                     bufferposz = buff.get(bufferposmove);
                     buff.position(bufferposz);
                     recvalues.add(buff.getInt());
+                    
+                    bufferposmove++;
                 }
                 if(tabInfo.getColInfo(ite).GetTypCol().contains("FLOAT")){
                     bufferposz = buff.get(bufferposmove);
                     buff.position(bufferposz);
                     recvalues.add(buff.getFloat());
-                }if(tabInfo.getColInfo(ite).GetTypCol().contains("VARSTRING(T)")){
+                    
+                    bufferposmove++;
+                }if(tabInfo.getColInfo(ite).GetTypCol().contains("VARSTRING")){
+                	int taille_du_varstring;
+                	bufferposz = buff.get(bufferposmove);
+                	buff.position(bufferposz);
+                	//if (ite<tabInfo.getColInfoList().size()-1) {
+                		taille_du_varstring = buff.getInt(bufferposmove+1)-bufferposz;
+                	//}else {
+                		taille_du_varstring = tabInfo.getColInfo(ite).getSizeString();
+                	//}
+                	byte[] string = new byte[taille_du_varstring];
+                	buff.position(bufferposz);
+                	buff.get(string);
+                	intermediaire = new String(string);
+                	recvalues.add(intermediaire);
+                	System.out.println("Valeur intérmédiaire:" +intermediaire);
+                	bufferposmove++;
+                	
+                	/*
                     bufferposz = buff.get(bufferposmove);
                     buff.position(bufferposz);
                     int taille_init_var = bufferposz;
@@ -295,6 +409,7 @@ public class Record {
                     recvalues.add(intermediaire);
                     intermediaire = "";
                     //bufferposmove++;
+                     */
                 }
             }
         } 
@@ -355,6 +470,17 @@ public class Record {
     
     public void readStringFromBuffer(ByteBuffer buffer, int pos, int taille){
         try {
+        	buffer.position(4096);
+        	buffer.flip();
+        	buffer.position(pos);
+        	byte[] string = new byte[taille];
+        	buffer.get(string);
+        	String inter = new String(string);
+        	recvalues.add(inter);
+        	System.out.println("Valeur intérmédiaire:" +inter);
+        	
+        	
+        	/*
             String inter = "";
             for(int i = 0; i<taille; i++){
                 inter += buffer.getChar(pos);
@@ -362,6 +488,7 @@ public class Record {
             }
             recvalues.add(inter);
             System.out.println("String intégré à recvalues :"+inter);
+            */
         } catch (Exception e) {
             // TODO: handle exception
             System.out.println("Exception caused by :"+e);
@@ -378,7 +505,7 @@ public class Record {
         */
     	while (buffer.hasRemaining()) {
             int element = buffer.getInt();
-            System.out.println(element);
+            System.out.print(element+" ");
         }
     }
 

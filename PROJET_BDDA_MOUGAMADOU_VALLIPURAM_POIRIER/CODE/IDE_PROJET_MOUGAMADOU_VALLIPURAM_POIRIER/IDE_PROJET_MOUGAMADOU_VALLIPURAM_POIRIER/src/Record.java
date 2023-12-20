@@ -98,9 +98,9 @@ public class Record {
             //buffer.put((byte)(recvalues.size()*4+4));
             
             int pos_debut= pos;
-            int pos_valeur = recvalues.size()*4+4;
+            //int pos_valeur = recvalues.size()*4+4;
 
-            int positionLastValue = 0;
+            //int positionLastValue = 0;
 
             int tabPositions[] = new int[recvalues.size()];
             int k;
@@ -231,6 +231,7 @@ public class Record {
                     float inter_float_variable = (float) recvalues.get(k);
                     positionInsertion = tabPositions[k];
                     writeInBufferFloat(buffer, positionInsertion, inter_float_variable);
+                    System.out.println(buffer.getFloat(positionInsertion));
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol().equals("INT")){
@@ -238,6 +239,7 @@ public class Record {
                     int inter_int_variable = (int) recvalues.get(k);
                     positionInsertion = tabPositions[k];
                     writeInBufferInt(buffer, positionInsertion, inter_int_variable);
+                    System.out.println(buffer.getInt(positionInsertion));
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol().contains("STRING") && !tabInfo.getColInfo(k).GetTypCol().contains("VAR")){
@@ -350,11 +352,12 @@ public class Record {
                 if(tabInfo.getColInfo(ite).GetTypCol().contains("STRING") && !tabInfo.getColInfo(ite).GetTypCol().contains("VAR")){
                     //on récupère la valeur indiquée à la position pos
                 	
-                	bufferposz = buff.get(bufferposmove);
+                	bufferposz = buff.getInt(bufferposmove);
                 	buff.position(bufferposz);
                 	byte[] string = new byte[T];
                 	buff.position(buff.capacity());
                 	buff.flip();
+                	buff.position(bufferposz);
                 	buff.get(string);
                 	intermediaire = new String(string);
                 	recvalues.add(intermediaire);
@@ -375,14 +378,14 @@ public class Record {
                	}	
                 
                 if(tabInfo.getColInfo(ite).GetTypCol().contains("INT")){
-                    bufferposz = buff.get(bufferposmove);
+                    bufferposz = buff.getInt(bufferposmove);
                     buff.position(bufferposz);
                     recvalues.add(buff.getInt());
                     
                     bufferposmove+=4;
                 }
                 if(tabInfo.getColInfo(ite).GetTypCol().contains("FLOAT")){
-                    bufferposz = buff.get(bufferposmove);
+                    bufferposz = buff.getInt(bufferposmove);
                     buff.position(bufferposz);
                     recvalues.add(buff.getFloat());
                     

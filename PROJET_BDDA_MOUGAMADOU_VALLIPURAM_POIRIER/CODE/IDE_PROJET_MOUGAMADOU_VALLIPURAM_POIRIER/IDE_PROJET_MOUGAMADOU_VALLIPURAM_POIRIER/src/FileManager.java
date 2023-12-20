@@ -259,7 +259,7 @@ public class FileManager {
 				int positonRecord =bufPage.getInt(intilisationPositionRecord);
 				Record rec = new Record(tabInfo);
 				int taille = rec.readFromBuffer(bufPage, positonRecord);
-		       // System.out.println(taille+" : taille record");		
+		        System.out.println(taille+" : taille record");		
 				listRec.add(rec);
 			}    
 			BufferManager.getInstance().FreePage(pageId, 1);
@@ -291,7 +291,7 @@ public class FileManager {
 						int positonRecord =buff2.getInt(intilisationPositionRecord);
 						Record rec = new Record(tabInfo);
 						int taille = rec.readFromBuffer(buff2, positonRecord);
-				       // System.out.println(taille+" : taille record");		
+				        System.out.println(taille+" : taille record");		
 						listRec.add(rec);
 					}    
 					BufferManager.getInstance().FreePage(pageId, 1);
@@ -324,7 +324,7 @@ public class FileManager {
 							int positonRecord =buff2.getInt(intilisationPositionRecord);
 							Record rec = new Record(tabInfo);
 							int taille = rec.readFromBuffer(buff2, positonRecord);
-					      //  System.out.println(taille+" : taille record");		
+					        System.out.println(taille+" : taille record");		
 							listRec.add(rec);
 						}    
 						BufferManager.getInstance().FreePage(pageId, 1);
@@ -477,10 +477,21 @@ public class FileManager {
 		  
 		  
 	  }
-	  /*
-	  public RecordId  InsertRecordIntoTable(Record record) {
-		  
+	  
+	  public RecordId  InsertRecordIntoTable(Record rec) {
+			int taille = rec.getTailleRecord();
+			PageId pageId = getFreeDataPageId(rec.getTabInfoRecord(), taille);
+			if (pageId == null) {
+				addDataPage(rec.getTabInfoRecord());
+				pageId = getFreeDataPageId(rec.getTabInfoRecord(), taille);
+			}
+			RecordId rid = writeRecordToDataPage(rec, pageId);
+			System.out.println(rid.slotIdx());
+			ByteBuffer buff = BufferManager.getInstance().GetPage(rid.getPageId());
+			rec.readFromBuffer(buff, buff.getInt(rid.slotIdx()));
+			return rid;
 	  }
+	  /*
 	  public List<Record> GetAllRecord(TableInfo tabInfo){
 		  
 		  
@@ -497,7 +508,7 @@ public class FileManager {
 	        */
 	    	while (buffer.hasRemaining()) {
 	            int element = buffer.getInt();
-	           // System.out.print(element+" ");
+	            System.out.print(element+" ");
 	        }
 	    }
 }
@@ -505,4 +516,6 @@ public class FileManager {
 	  
 	
 
+	
+	  
 	

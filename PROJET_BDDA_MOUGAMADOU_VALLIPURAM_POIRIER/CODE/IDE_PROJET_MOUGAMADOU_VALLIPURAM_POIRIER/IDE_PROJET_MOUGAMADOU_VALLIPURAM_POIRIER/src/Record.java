@@ -62,7 +62,7 @@ public class Record {
                 //on vérifie le type de la relation
                 //gestion pour STRING
                 if(tabInfo.getColInfo(i).GetTypCol().contains("STRING") && !tabInfo.getColInfo(i).GetTypCol().contains("VAR")){
-                    System.out.println("wr_STRING_taillefixe");
+                    //System.out.println("wr_STRING_taillefixe");
                     String valeur_string = (String) recvalues.get(i);
                     writeInBufferString(buffer, pos, valeur_string);
                     pos += tabInfo.getColInfo(i).getSizeString();
@@ -77,7 +77,7 @@ public class Record {
                         
                     } 
                     else if (tabInfo.getColInfo(i).GetTypCol().equals("INT")){
-                        System.out.println("On passe par la nouvelle commande");
+                        //System.out.println("On passe par la nouvelle commande");
                         int inter_int = (int) recvalues.get(i);
                         writeInBufferInt(buffer, pos, inter_int);
                         
@@ -90,7 +90,7 @@ public class Record {
         }
 
         else {
-            System.out.println("writebuffer_passage_taille_var");
+           // System.out.println("writebuffer_passage_taille_var");
             //on utilise le modèle taille variable
             //ByteBuffer nvbuff;
             //init le offset directory
@@ -152,7 +152,7 @@ public class Record {
                 else if(tabInfo.getColInfo(iteration).GetTypCol().contains("STRING") && !tabInfo.getColInfo(iteration).GetTypCol().contains("VAR")){
                     buffer.putInt(position_valeur);
                     buffer.position(pos+=4);
-                    System.out.println("kdfjslkfsfkjsdlfk");
+                   // System.out.println("kdfjslkfsfkjsdlfk");
                     tabPositions[iteration] = position_valeur;
                     position_valeur+=T;
 
@@ -215,10 +215,10 @@ public class Record {
                 buffer.putInt(position_valeur);
             }
 
-            System.out.println(tabPositions.toString());
+           // System.out.println(tabPositions.toString());
             
             for(k=0; k<recvalues.size(); k++){
-                System.out.println("envoi info");
+              //  System.out.println("envoi info");
                 //buffer.position(pos_index);
                 //buffer.put((byte)pos_valeur);
 
@@ -227,30 +227,30 @@ public class Record {
 
 
                 if(tabInfo.getColInfo(k).GetTypCol().equals("FLOAT")){
-                    System.out.println("writebuffer_FLOAT_taillevar");
+                  //  System.out.println("writebuffer_FLOAT_taillevar");
                     float inter_float_variable = (float) recvalues.get(k);
                     positionInsertion = tabPositions[k];
                     writeInBufferFloat(buffer, positionInsertion, inter_float_variable);
-                    System.out.println(buffer.getFloat(positionInsertion));
+                   // System.out.println(buffer.getFloat(positionInsertion));
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol().equals("INT")){
-                    System.out.println("PASSAGE PAR INT//TAILLE VARIABLE");
+                 //   System.out.println("PASSAGE PAR INT//TAILLE VARIABLE");
                     int inter_int_variable = (int) recvalues.get(k);
                     positionInsertion = tabPositions[k];
                     writeInBufferInt(buffer, positionInsertion, inter_int_variable);
-                    System.out.println(buffer.getInt(positionInsertion));
+                 //   System.out.println(buffer.getInt(positionInsertion));
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol().contains("STRING") && !tabInfo.getColInfo(k).GetTypCol().contains("VAR")){
-                    System.out.println("wr_STRING_taillevar");
+                   // System.out.println("wr_STRING_taillevar");
                     String valeur_string = (String) recvalues.get(k);
                     positionInsertion = tabPositions[k];
                     writeInBufferString(buffer, positionInsertion, valeur_string);
                 }
 
                 else if(tabInfo.getColInfo(k).GetTypCol().contains("VARSTRING")){
-                    System.out.println("writebuffer_VARSTRING_taillevariable");
+                  //  System.out.println("writebuffer_VARSTRING_taillevariable");
                     String valeur_varstring = (String) recvalues.get(k);
                     positionInsertion = tabPositions[k];
                     writeInBufferString(buffer, positionInsertion, valeur_varstring);
@@ -265,28 +265,28 @@ public class Record {
     }
 
     public void writeInBufferInt(ByteBuffer buff, int pos, int aEcrire){
-        System.out.println("écrit dans le buffer:"+ aEcrire);
+       // System.out.println("écrit dans le buffer:"+ aEcrire);
         try {
             buff.position(pos);
             buff.putInt(aEcrire);
         } catch (Exception e) {
             // TODO: handle exception
-            System.out.println("Le int "+aEcrire+" a causé une erreur");
-            System.out.println(e);
+           // System.out.println("Le int "+aEcrire+" a causé une erreur");
+          //  System.out.println(e);
         }
     }
 
     public void writeInBufferFloat(ByteBuffer buff, int pos, float aEcrire){
-        System.out.println("écrit dans le buffer:"+ aEcrire);
+      //  System.out.println("écrit dans le buffer:"+ aEcrire);
         try{
-        	System.out.println("------------"+aEcrire);
+        	//System.out.println("------------"+aEcrire);
             buff.position(pos);
             buff.putFloat(aEcrire);
             buff.position(pos);
             
-            System.out.println("------------"+buff.getFloat());
+          //  System.out.println("------------"+buff.getFloat());
         } catch (Exception e){
-            System.out.println("Le float "+aEcrire+" a causé une erreur");
+          //  System.out.println("Le float "+aEcrire+" a causé une erreur");
             System.out.println(e);
         }
     }
@@ -310,7 +310,7 @@ public class Record {
             */   
         } catch (Exception e) {
             // TODO: handle exception
-            System.out.println("Le string "+aEcrire+" a causé une erreur");
+          //  System.out.println("Le string "+aEcrire+" a causé une erreur");
             System.out.println(e);
         }
     }
@@ -361,7 +361,7 @@ public class Record {
                 	buff.get(string);
                 	intermediaire = new String(string);
                 	recvalues.add(intermediaire);
-                	System.out.println("Valeur intérmédiaire:" +intermediaire);
+                	//System.out.println("Valeur intérmédiaire:" +intermediaire);
                 	bufferposmove+=4;
                 	
                 	/*
@@ -403,7 +403,7 @@ public class Record {
                 	buff.get(string);
                 	intermediaire = new String(string);
                 	recvalues.add(intermediaire);
-                	System.out.println("Valeur intérmédiaire:" +intermediaire);
+                	//System.out.println("Valeur intérmédiaire:" +intermediaire);
                 	bufferposmove+=4;
                 	
                 	/*
@@ -452,7 +452,7 @@ public class Record {
                 }*/
             }
         }
-        System.out.println("recvalues: "+recvalues);
+       // System.out.println("recvalues: "+recvalues);
         return buff.position()-taille;
     }
 
@@ -460,7 +460,7 @@ public class Record {
         try {
             int inter = buffer.getInt(pos);
             recvalues.add(inter);
-            System.out.println("Int intégré à recvalues :"+inter);
+           // System.out.println("Int intégré à recvalues :"+inter);
         } catch (Exception e) {
             // TODO: handle exception
             System.out.println("Exception caused by :"+e);
@@ -471,7 +471,7 @@ public class Record {
         try {
             float inter = buffer.getFloat(pos);
             recvalues.add(inter);
-            System.out.println("Float intégré à recvalues :"+inter);
+            //System.out.println("Float intégré à recvalues :"+inter);
         } catch (Exception e) {
             // TODO: handle exception
             System.out.println("Exception caused by :"+e);
@@ -487,7 +487,7 @@ public class Record {
         	buffer.get(string);
         	String inter = new String(string);
         	recvalues.add(inter);
-        	System.out.println("Valeur intérmédiaire:" +inter);
+        //	System.out.println("Valeur intérmédiaire:" +inter);
         	
         	
         	/*
@@ -515,7 +515,7 @@ public class Record {
         */
     	while (buffer.hasRemaining()) {
             int element = buffer.getInt();
-            System.out.print(element+" ");
+           // System.out.print(element+" ");
         }
     }
 

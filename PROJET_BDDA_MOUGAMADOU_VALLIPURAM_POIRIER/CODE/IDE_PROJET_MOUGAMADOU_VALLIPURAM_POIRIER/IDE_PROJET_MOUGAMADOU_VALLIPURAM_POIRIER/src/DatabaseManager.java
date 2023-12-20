@@ -85,11 +85,22 @@ public class DatabaseManager {
 				break;
 			case "IMPORT":
 				if(mots[1].equals("INTO")) {
-					ImportCommand ic = new ImportCommand(mots);
-					i
+					ImportCommand ic = null;
+					try {
+						ic = new ImportCommand(mots);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						ic.execute();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 				}
 				break;
-				
 			default:
 				System.out.println("Cette commande n'existe pas !");
 				break;

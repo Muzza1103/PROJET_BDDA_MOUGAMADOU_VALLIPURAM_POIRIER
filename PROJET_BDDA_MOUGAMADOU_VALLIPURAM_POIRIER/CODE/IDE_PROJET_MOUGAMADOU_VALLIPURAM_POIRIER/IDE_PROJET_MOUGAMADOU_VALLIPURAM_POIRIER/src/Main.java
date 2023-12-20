@@ -16,7 +16,7 @@ public class Main {
         	boolean inter=true;
         	while(inter) {
         		System.out.println ("Que voulez vous faire ?");
-        		String s = sc.next();
+        		String s = sc.nextLine();
         		if(s.equals("EXIT")) {
         			dbm.Finish();
         			inter=false;

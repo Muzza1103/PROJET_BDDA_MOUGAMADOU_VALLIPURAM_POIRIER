@@ -31,17 +31,17 @@ public class FileManagerTest {
   
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-	DBParams.DBPath = "C:\\Users\\thibh\\OneDrive\\Bureau\\Projet_BDDA__MOUGAMADOU_VALLIPURAM_POIRIER\\DB\\";
+	DBParams.DBPath = "C:\\Users\\mmuzz\\OneDrive\\Bureau\\L3\\BDDA\\DB\\";
 	DBParams.SGBDPageSize = 4096;
         DBParams.DMFileCount = 4;
         DBParams.frameCount = 2;
         BufferManager bm = BufferManager.getInstance();
         DiskManager dk = DiskManager.getInstance();
         //System.out.println(page.toString());  
-        ColInfo Colonne0 = new ColInfo("Nom", "VARSTRING(23)");
+        ColInfo Colonne0 = new ColInfo("Nom", "FLOAT");
         ColInfo Colonne1 = new ColInfo("Age", "INT");
         ColInfo Colonne2 = new ColInfo("Taille", "FLOAT");
-        ColInfo Colonne3 = new ColInfo("Genre", "STRING(20)");
+        ColInfo Colonne3 = new ColInfo("Genre", "INT");
 
         ArrayList<ColInfo> ListeColonnes = new ArrayList<>();
         ListeColonnes.add(Colonne0);
@@ -58,10 +58,10 @@ public class FileManagerTest {
         Record Record0 = new Record(tab);
         
         ArrayList<Object> recValues = new ArrayList<>();
-        String nom_0 = "MonPrenom";
+        float nom_0 = 122.13f;
         int age_0 = 20;
         float taille_0 = 1.76f;
-        String genre_0 = "voila_20_characteres";
+        int genre_0 = 12;
 
         
         recValues.add(nom_0);

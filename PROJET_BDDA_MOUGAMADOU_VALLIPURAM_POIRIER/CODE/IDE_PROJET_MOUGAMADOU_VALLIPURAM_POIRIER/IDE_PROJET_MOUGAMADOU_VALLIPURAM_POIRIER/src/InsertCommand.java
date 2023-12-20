@@ -111,6 +111,9 @@ public class InsertCommand {
 					taille += rec.getTabInfoRecord().getColInfo(i).getSizeString();
 				}
 			}
+			if (rec.extraireTypes(rec.getTabInfoRecord()).contains("VARSTRING")) {
+				taille += rec.getRecValues().size()*4 ;
+			}
 			PageId pageId = fm.getFreeDataPageId(rec.getTabInfoRecord(), taille);
 			if (pageId == null) {
 				fm.addDataPage(rec.getTabInfoRecord());
@@ -120,22 +123,13 @@ public class InsertCommand {
 			for(int i=0; i < rec.getRecValues().size();i++) {
 				System.out.println(rec.getRecValues().get(i).toString());
 			}*/
-			ByteBuffer buff = BufferManager.getInstance().GetPage(pageId);
-			printBuffer(buff);
-			BufferManager.getInstance().FreePage(pageId, 1);
+			
 			fm.writeRecordToDataPage(rec, pageId);
-			ByteBuffer buff2 = BufferManager.getInstance().GetPage(pageId);
-			printBuffer(buff2);
-			BufferManager.getInstance().FreePage(pageId, 1);
+			
 			//InsertRecordIntoTable(rec);
 		}
 	}
 	
-	public static void printBuffer(ByteBuffer buffer) {
-        byte[] bytes = new byte[buffer.remaining()];
-        buffer.get(bytes);
-        System.out.println((String) Arrays.toString(bytes));
-    }
-		
+			
 	
 }

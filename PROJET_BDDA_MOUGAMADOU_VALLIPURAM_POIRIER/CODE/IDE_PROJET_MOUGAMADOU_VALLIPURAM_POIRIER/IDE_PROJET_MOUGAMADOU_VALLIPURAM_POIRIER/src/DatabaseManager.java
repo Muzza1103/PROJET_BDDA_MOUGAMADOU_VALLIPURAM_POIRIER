@@ -69,7 +69,7 @@ public class DatabaseManager {
 				break;
 			
 			case "INSERT":
-				if (mots[1].equals("TABLE") && mots[3].equals("VALUES")) {
+				if (mots[1].equals("INTO") && mots[3].equals("VALUES")) {
 					InsertCommand ic = new InsertCommand(mots);
 					ic.execute();
 				}else {

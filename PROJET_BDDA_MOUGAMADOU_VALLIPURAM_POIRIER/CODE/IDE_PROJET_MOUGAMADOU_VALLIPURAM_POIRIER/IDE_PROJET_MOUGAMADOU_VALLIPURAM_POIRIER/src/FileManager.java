@@ -259,7 +259,7 @@ public class FileManager {
 				int positonRecord =bufPage.getInt(intilisationPositionRecord);
 				Record rec = new Record(tabInfo);
 				int taille = rec.readFromBuffer(bufPage, positonRecord);
-		        System.out.println(taille+" : taille record");		
+		       // System.out.println(taille+" : taille record");		
 				listRec.add(rec);
 			}    
 			BufferManager.getInstance().FreePage(pageId, 1);
@@ -291,7 +291,7 @@ public class FileManager {
 						int positonRecord =buff2.getInt(intilisationPositionRecord);
 						Record rec = new Record(tabInfo);
 						int taille = rec.readFromBuffer(buff2, positonRecord);
-				        System.out.println(taille+" : taille record");		
+				       // System.out.println(taille+" : taille record");		
 						listRec.add(rec);
 					}    
 					BufferManager.getInstance().FreePage(pageId, 1);
@@ -324,7 +324,7 @@ public class FileManager {
 							int positonRecord =buff2.getInt(intilisationPositionRecord);
 							Record rec = new Record(tabInfo);
 							int taille = rec.readFromBuffer(buff2, positonRecord);
-					        System.out.println(taille+" : taille record");		
+					      //  System.out.println(taille+" : taille record");		
 							listRec.add(rec);
 						}    
 						BufferManager.getInstance().FreePage(pageId, 1);
@@ -497,7 +497,7 @@ public class FileManager {
 	        */
 	    	while (buffer.hasRemaining()) {
 	            int element = buffer.getInt();
-	            System.out.print(element+" ");
+	           // System.out.print(element+" ");
 	        }
 	    }
 }
@@ -505,6 +505,4 @@ public class FileManager {
 	  
 	
 
-	
-	  
 	

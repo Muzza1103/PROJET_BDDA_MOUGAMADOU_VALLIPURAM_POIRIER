@@ -28,6 +28,11 @@ public class TestDataBaseManager {
 		dbm.ProcessCommand("INSERT INTO Profs VALUES (Ileana,BDDA)");
 	}
 	
+	public static void testImport() {
+		DatabaseManager dbm = DatabaseManager.getInstance(); 
+		dbm.ProcessCommand("IMPORT INTO S S.csv");
+	}
+	
 	
 
 }

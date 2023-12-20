@@ -333,7 +333,7 @@ public class Record {
         int bufferposmove=pos;
         int bufferposz;
         
-        int taille=0;
+        int taille=pos;
         if(recvalues==null) {
         	recvalues = new ArrayList<Object>();
         }
@@ -453,7 +453,7 @@ public class Record {
             }
         }
         System.out.println("recvalues: "+recvalues);
-        return taille;
+        return buff.position()-taille;
     }
 
     public void readIntFromBuffer(ByteBuffer buffer, int pos){
@@ -525,5 +525,36 @@ public class Record {
     
     public ArrayList<Object> getRecValues(){
     	return recvalues;
+    }
+    
+    public int getTailleRecord() {
+    	int taille=0;
+    	for (int i=0;i<tabInfo.getColInfoList().size();i++) {
+    		if(tabInfo.getColInfo(i).GetTypCol().equals("INT")||tabInfo.getColInfo(i).GetTypCol().equals("FLOAT")) {
+    			taille+=4;
+    		}
+    		if (tabInfo.getColInfo(i).GetTypCol().contains("STRING") && !tabInfo.getColInfo(i).GetTypCol().contains("VAR") ) {
+    			taille += tabInfo.getColInfo(i).getSizeString();
+    		}
+    		if (tabInfo.getColInfo(i).GetTypCol().contains("VARSTRING") ) {
+    				String varString = (String) recvalues.get(i);
+    				taille += varString.length();
+    			}
+    		}
+    	ArrayList<String> types_contenus = new ArrayList<>();
+        types_contenus = extraireTypes(tabInfo);
+    	boolean contient_var= false;
+       
+    	for(int ite_type_cont = 0; ite_type_cont<types_contenus.size();ite_type_cont++){
+            if(types_contenus.get(ite_type_cont).contains("VAR")){
+                contient_var = true;
+            }
+    	}
+    	
+    	if(contient_var) {
+    		taille+= tabInfo.getColInfoList().size()*4;
+    	}
+    	return taille;
+    	
     }
 }

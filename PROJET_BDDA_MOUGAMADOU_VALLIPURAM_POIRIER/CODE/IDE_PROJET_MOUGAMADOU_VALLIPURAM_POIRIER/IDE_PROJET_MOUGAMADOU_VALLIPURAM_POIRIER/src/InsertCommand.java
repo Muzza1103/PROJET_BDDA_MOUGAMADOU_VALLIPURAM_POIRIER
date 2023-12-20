@@ -6,7 +6,7 @@ public class InsertCommand {
 	private Record rec;
 	
 	public InsertCommand(String [] mots) {
-		List<String> motColonnes = new ArrayList<>();
+
 		DataBaseInfo dbi = DataBaseInfo.getInstance();
 		String nomRelation = mots[2];
 		int numTable = -1;
@@ -22,18 +22,11 @@ public class InsertCommand {
 				rec = new Record(dbi.getList().get(numTable));
 				ArrayList<Object> recvalues = new ArrayList<>();
 				ArrayList<String> types = rec.extraireTypes(dbi.getList().get(numTable));
-				for(int i=0;i<types.size();i++) {
-					System.out.println(types.get(i));
-				}
-				//System.out.println("0.1");
 				if (dbi.getList().get(numTable).getNbColonnes() == mots3.length) {
-					//System.out.println("0.2");
 					for(int i = 0; i < mots3.length; i++) {
 						if (types.get(i).contains("STRING")) {
 							if (getType(mots3[i]).contains("STRING") && mots3[i].length()< dbi.getList().get(numTable).getColInfo(i).getSizeString()) {
-								//System.out.println("1");
 								recvalues.add(mots3[i]);
-								//System.out.println("2");
 							}
 						}else if (types.get(i).equals("INT")) {
 							if (getType(mots3[i]).equals(types.get(i))) {
@@ -44,9 +37,6 @@ public class InsertCommand {
 								recvalues.add(Float.parseFloat(mots3[i]));
 							}
 						}
-					}
-					for(int i=0; i < recvalues.size();i++) {
-						System.out.println("recvalues.get(" + i + ") = " + recvalues.get(i));
 					}
 					if(recvalues.size() == dbi.getList().get(numTable).getNbColonnes()) {
 						rec.InsertValues(recvalues);

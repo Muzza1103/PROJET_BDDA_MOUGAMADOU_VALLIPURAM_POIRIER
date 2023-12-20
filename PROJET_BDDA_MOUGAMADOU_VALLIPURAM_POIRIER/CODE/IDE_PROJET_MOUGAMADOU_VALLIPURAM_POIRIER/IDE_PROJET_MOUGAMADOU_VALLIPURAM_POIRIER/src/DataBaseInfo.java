@@ -100,9 +100,11 @@ public class DataBaseInfo implements Serializable {
     	
     }
 
-    public void addTableInfo(TableInfo tableAdd){
-        listInfos.add(tableAdd);
-        compteurRel++;
+   public void addTableInfo(TableInfo tableAdd){
+    	if(!listInfos.contains(tableAdd)) {
+    		listInfos.add(tableAdd);
+    		compteurRel++;
+    	}
     }
     
     public void affichage() { // Pour les tests 

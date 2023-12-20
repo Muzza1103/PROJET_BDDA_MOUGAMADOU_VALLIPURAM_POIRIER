@@ -12,7 +12,8 @@ public class ImportCommand{
 	public ImportCommand(String[] mots) throws FileNotFoundException {
 		this.nomRelation = mots[2];
 		String fileName = mots[3];
-		this.file = new File("/users/licence/in07091/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/PROJET_BDDA_MOUGAMADOU_VALLIPURAM_POIRIER/" + fileName);
+		String chemin = DBParams.DBPath.replace("/DB/", "/");
+		this.file = new File(chemin + fileName);
 		this.fileReader = new FileReader(file);
 	}
 	public void execute() throws IOException {
